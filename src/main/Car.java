@@ -32,13 +32,7 @@ public class Car extends Agent {
 
 		@Override
 		public void action() {
-			/*
-			 *  1 - Perguntar a intersecao posicao dos outros carros
-			 *  2 - Verificar se ha carros na caixa de colisao
-			 *  3 - Se nao, incrementar posicao
-			 *  4 - Se sim, nao sair do sitio.
-			 *  5 - Informar a nova posiçao
-			 */
+			
 		}
 		
 		
