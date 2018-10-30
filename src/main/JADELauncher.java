@@ -26,6 +26,10 @@ public class JADELauncher {
 		Car c1 = new Car("1");
 		cars.add(c1);
 		
+		// create a new car in the road 2 
+		Car c2 = new Car("2");
+		cars.add(c2);
+		
 		//CarControllerAgent
 		CarControllerAgent carController = new CarControllerAgent();
 		
@@ -45,7 +49,16 @@ public class JADELauncher {
 		} catch (StaleProxyException e) {
 			e.printStackTrace();
 		}
-
+		
+		
+		AgentController ac4;
+		try {
+			ac4 = mainContainer.acceptNewAgent("car2", c2);
+			ac4.start();
+		} catch (StaleProxyException e) {
+			e.printStackTrace();
+		}
+		
 		AgentController ac3;
 		try {
 			ac3 = mainContainer.acceptNewAgent("myRMA", new jade.tools.rma.rma());

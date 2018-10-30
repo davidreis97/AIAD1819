@@ -2,8 +2,8 @@ package main;
 
 public class Point implements java.io.Serializable{
 	
-	double x;
-	double y;
+	public double x;
+	public double y;
 	
 	public Point(double x, double y) {
 		this.x = x;
@@ -14,23 +14,6 @@ public class Point implements java.io.Serializable{
 		this.x = 0;
 		this.y = 0;
 	}
-
-	public double getX() {
-		return x;
-	}
-
-	public void setX(double x) {
-		this.x = x;
-	}
-
-	public double getY() {
-		return y;
-	}
-
-	public void setY(double y) {
-		this.y = y;
-	} 
-	
 	 
 	@Override
 	public boolean equals(Object obj) {
@@ -42,6 +25,16 @@ public class Point implements java.io.Serializable{
 	public String toString() { 
 	    return "(" + x + "," + y + ")";
 	}
-
+	
+	public void add(Point point) {
+		this.x += point.x;
+		this.y += point.y;
+	}
+	
+	public Point symetric() {
+		return new Point(-this.x,-this.y);
+	}
+	
+	
 	
 }

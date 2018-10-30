@@ -1,5 +1,6 @@
 package main;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 import jade.core.AID;
@@ -11,11 +12,11 @@ import jade.lang.acl.UnreadableException;
 
 public class CarControllerAgent extends Agent {
 	
-	HashMap<AID, Point> lista;
+	HashMap<AID, Car> lista;
 	 
 	public void setup() {
 		addBehaviour(new ListeningBehaviour());
-		lista = new HashMap<AID, Point>();
+		lista = new HashMap<AID, Car>();
 	}
 	
 	class ListeningBehaviour extends CyclicBehaviour {
@@ -24,33 +25,23 @@ public class CarControllerAgent extends Agent {
 			
 			ACLMessage msg = receive();
 			
-			
 			if(msg != null) {
  
-				if(msg.getPerformative() == ACLMessage.INFORM) {
-						
-					try {
-							
-						lista.put(msg.getSender(), (Point)msg.getContentObject());
-									
-					} catch (UnreadableException e) {
-						
-						e.printStackTrace();
-					}
-					
-				}
-				else if(msg.getPerformative() == ACLMessage.REQUEST) {
-					
-					//ver se nenhum carro a frente atraves da lista TODO 
-					
+				if(msg.getPerformative() == ACLMessage.REQUEST) {
+										
 					ACLMessage reply = msg.createReply();
-					reply.setPerformative(ACLMessage.CONFIRM); 
+					reply.setPerformative(ACLMessage.INFORM); 
+					try {
+						reply.setContentObject(lista); //Cada carro usa a sua propria informacao para determinar se avanca - provavelmente fica mais fixe se eles falarem uns com os outros com paginas amarelas sem controlador mas dps ve-se isso
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 					send(reply);
 					
 					try {
 						
-						lista.put(msg.getSender(), (Point)msg.getContentObject() );
-						System.out.println(lista);
+						lista.put(msg.getSender(), (Car)msg.getContentObject() );
+						//System.out.println(lista);
 									
 					} catch (UnreadableException e) {
 						

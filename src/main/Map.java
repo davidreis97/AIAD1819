@@ -72,7 +72,7 @@ public class Map extends JPanel {
 
 		for (Car c : cars) {
 
-			Rectangle2D rect = new Rectangle2D.Double(c.location.x * unit, c.location.y * unit, 1 * unit, 1 * unit);
+			Rectangle2D rect = new Rectangle2D.Double(c.location.x * unit, c.location.y * unit, c.size.x * unit, c.size.y * unit);
 			g2.setPaint(Color.PINK);
 			g2.fill(rect);
 
