@@ -1,6 +1,6 @@
 package main;
 
-public class Point {
+public class Point implements java.io.Serializable{
 	
 	double x;
 	double y;

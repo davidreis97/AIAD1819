@@ -25,7 +25,19 @@ public class JADELauncher {
 		// create a new car in the road 1  
 		Car c1 = new Car("1");
 		cars.add(c1);
-	
+		
+		//CarControllerAgent
+		CarControllerAgent carController = new CarControllerAgent();
+		
+		AgentController ac2;
+		try {
+			ac2 = mainContainer.acceptNewAgent("CarControllerAgent", carController);
+			ac2.start();
+		} catch (StaleProxyException e) {
+			e.printStackTrace();
+		}
+		
+		
 		AgentController ac1;
 		try {
 			ac1 = mainContainer.acceptNewAgent("car1", c1);
@@ -41,7 +53,7 @@ public class JADELauncher {
 		} catch (StaleProxyException e) {
 			e.printStackTrace();
 		}
-
+		 
 		/* Draw the map */
 		Map mapa = new Map(cars);
 
