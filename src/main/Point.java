@@ -18,7 +18,15 @@ public class Point implements java.io.Serializable{
 	@Override
 	public boolean equals(Object obj) {
 		Point p2 = (Point)obj;
-		return this.x>=p2.x && this.y>=p2.y;
+		return this.x==p2.x && this.y==p2.y; //ALTO LA PODE NAO FUNCIONAR - 0.00000001 != 0
+		/*
+		 * Alternativa que funciona:
+		 * 
+		 * double threshold = 0.001;
+		 * 
+		 * return this.x > p2.x - threshold && this.x < p2.x + threshold && this.y > p2.y - threshold && this.y < p2.y + threshold;
+		 * 
+		 */
 	}
 	
 	@Override

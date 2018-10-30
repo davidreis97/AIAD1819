@@ -19,14 +19,14 @@ public class Car extends Agent {
 	public Point location; // location
 	public Point velocity;
 	public Point size;
-
+	
 	private Point startPoint;
 	private Point interPoint;
 	private Point stopPoint;
 	private String road;
 
 	public Car(String road) {
-		
+				
 		this.size = new Point(1,1); //No futuro podemos ter carros de tamanho diferente
 		
 		this.road = road;
@@ -99,7 +99,7 @@ public class Car extends Agent {
 							}
 						}	
 						
-						if (location.equals(stopPoint)) { // TODO end
+						if (isOutOfBounds()) { // TODO end
 							this.myAgent.doDelete();
 							return;
 						}
@@ -117,6 +117,14 @@ public class Car extends Agent {
 			}
 
 		});
+	}
+	
+	public boolean isOutOfBounds() {
+		if(location.x > 10 || location.x < 0 || location.y > 10 || location.y < 0) {
+			return true;
+		}else {
+			return false;
+		}
 	}
 	
 	public boolean collisionRisk(Car otherCar) {
