@@ -70,12 +70,18 @@ public class Map extends JPanel {
 
 		// draw cars
 
-		for (Car c : cars) {
+		for (int i = 0; i < cars.size(); ) {
+			Car c = cars.get(i);
 
 			Rectangle2D rect = new Rectangle2D.Double(c.location.x * unit, c.location.y * unit, c.size.x * unit, c.size.y * unit);
 			g2.setPaint(Color.PINK);
 			g2.fill(rect);
-
+			
+			if (!c.isAlive()) {
+				cars.remove(c);
+			}else {
+				i++;
+			}
 		}
 	}
 

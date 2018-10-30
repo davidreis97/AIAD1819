@@ -100,6 +100,7 @@ public class Car extends Agent {
 						}	
 						
 						if (location.equals(stopPoint)) { // TODO end
+							this.myAgent.doDelete();
 							return;
 						}
 						
