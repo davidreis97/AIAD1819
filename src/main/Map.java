@@ -31,10 +31,13 @@ public class Map extends JPanel {
 	public static final Point r4InterPoint = new Point(4, 3);
 	public static final Point r4StopPoint = new Point(4, 9);
 
-	
+	//Intersection 
+	public static final Point intersectionP = new Point(4, 4);
+ 
+ 
 	public ArrayList<Car> cars;
 
-	public Map(ArrayList<Car> cars) {
+	public Map() {
 		
 		JFrame frame = new JFrame("Map");
 	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -43,7 +46,7 @@ public class Map extends JPanel {
 	    frame.add(this);
 	    frame.setVisible(true);
 	    
-		this.cars = cars;
+		this.cars = new ArrayList<Car>();
 	}
 	
 	public void addCar(Car car) {
@@ -63,15 +66,22 @@ public class Map extends JPanel {
 
 		// ROAD 1 / 3
 		int unit = 50;
-		g2.drawLine(0 * unit, 4 * unit, 10 * unit, 4 * unit);
-		g2.drawLine(0 * unit, 5 * unit, 10 * unit, 5 * unit);
-		g2.drawLine(0 * unit, 6 * unit, 10 * unit, 6 * unit);
+		g2.drawLine(0 * unit, 4 * unit, 4 * unit, 4 * unit);
+		g2.drawLine(6 * unit, 4 * unit, 10 * unit, 4 * unit);
+		g2.drawLine(0 * unit, 6 * unit, 4 * unit, 6 * unit);
+		g2.drawLine(6 * unit, 6 * unit, 10 * unit, 6 * unit);
 
 		// ROAD 2 / 4
-		g2.drawLine(4 * unit, 0 * unit, 4 * unit, 10 * unit);
-		g2.drawLine(5 * unit, 0 * unit, 5 * unit, 10 * unit);
-		g2.drawLine(6 * unit, 0 * unit, 6 * unit, 10 * unit);
+		g2.drawLine(4 * unit, 0 * unit, 4 * unit, 4 * unit);
+		g2.drawLine(4 * unit, 6 * unit, 4 * unit, 10 * unit);
+		g2.drawLine(6 * unit, 0 * unit, 6 * unit, 4 * unit);
+		g2.drawLine(6 * unit, 6 * unit, 6 * unit, 10 * unit);
 
+		g2.setStroke(new BasicStroke(3, BasicStroke.CAP_BUTT, 
+				BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0));
+		g2.drawLine(0 * unit, 5 * unit, 10 * unit, 5 * unit);
+		g2.drawLine(5 * unit, 0 * unit, 5 * unit, 10 * unit);
+		
 		// draw cars
 
 		for (int i = 0; i < cars.size(); ) {

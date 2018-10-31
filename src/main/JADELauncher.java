@@ -19,19 +19,18 @@ public class JADELauncher {
 		Profile p1 = new ProfileImpl();
 		ContainerController mainContainer = rt.createMainContainer(p1);
 				
-		//CarControllerAgent
-		CarControllerAgent carController = new CarControllerAgent();
+		/* Intersection agent */
+		IntersectionAgent carController = new IntersectionAgent();
 		
 		AgentController ac1;
 		try {
-			ac1 = mainContainer.acceptNewAgent("CarControllerAgent", carController);
+			ac1 = mainContainer.acceptNewAgent("IntersectionAgent", carController);
 			ac1.start();
 		} catch (StaleProxyException e) {
 			e.printStackTrace();
 		}
 
-
-		//RMA
+		/* RMA */
 		AgentController ac2;
 		try {
 			ac2 = mainContainer.acceptNewAgent("myRMA", new jade.tools.rma.rma());
@@ -39,14 +38,14 @@ public class JADELauncher {
 		} catch (StaleProxyException e) {
 			e.printStackTrace();
 		}
-
-		 
-		/* Draw the map */
-		Map mapa = new Map(new ArrayList<Car>());
-
-		//CarSpawner
+		
+		
+		/* Map */ 
+		Map mapa = new Map();
+		
+		/* CarSpawner */
 		CarSpawner carSpawner = new CarSpawner(mainContainer, mapa);
-				
+		
 		AgentController ac3;
 		try {
 			ac3 = mainContainer.acceptNewAgent("CarSpawner", carSpawner);
@@ -56,12 +55,28 @@ public class JADELauncher {
 		}
 		
 		
+		/* Road agents */
+		AgentController ac4;
+		
+		for(int i=1; i<=4; i++) {
+			
+			try {
+				ac4 = mainContainer.acceptNewAgent("RoadAgent"+i, new RoadAgent());
+				ac4.start();
+			} catch (StaleProxyException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+		
+		/* Draw the map */
 		Runnable myRunnable = new Runnable() {
 			public void run() {
 
 				while (true) {
 					try {
-						Thread.sleep(200);
+						Thread.sleep(100);
 					} catch (InterruptedException e) {
 					}
 					mapa.repaint();
