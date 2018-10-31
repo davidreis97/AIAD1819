@@ -12,24 +12,24 @@ import java.awt.*;
 public class Map extends JPanel {
 
 	// Road 1
-	public static Point r1StartPoint = new Point(0, 5);
-	public static Point r1InterPoint = new Point(3, 5);
-	public static Point r1StopPoint = new Point(9, 5);
+	public static final Point r1StartPoint = new Point(0, 5);
+	public static final Point r1InterPoint = new Point(3, 5);
+	public static final Point r1StopPoint = new Point(9, 5);
 
 	// Road 2
-	public static Point r2StartPoint = new Point(5, 9);
-	public static Point r2InterPoint = new Point(5, 6);
-	public static Point r2StopPoint = new Point(5, 0);
+	public static final Point r2StartPoint = new Point(5, 9);
+	public static final Point r2InterPoint = new Point(5, 6);
+	public static final Point r2StopPoint = new Point(5, 0);
 
 	// Road 3
-	public static Point r3StartPoint = new Point(9, 4);
-	public static Point r3InterPoint = new Point(6, 4);
-	public static Point r3StopPoint = new Point(0, 4);
+	public static final Point r3StartPoint = new Point(9, 4);
+	public static final Point r3InterPoint = new Point(6, 4);
+	public static final Point r3StopPoint = new Point(0, 4);
 
 	// Road 4
-	public static Point r4StartPoint = new Point(4, 0);
-	public static Point r4InterPoint = new Point(4, 3);
-	public static Point r4StopPoint = new Point(4, 9);
+	public static final Point r4StartPoint = new Point(4, 0);
+	public static final Point r4InterPoint = new Point(4, 3);
+	public static final Point r4StopPoint = new Point(4, 9);
 
 	
 	public ArrayList<Car> cars;
@@ -44,6 +44,10 @@ public class Map extends JPanel {
 	    frame.setVisible(true);
 	    
 		this.cars = cars;
+	}
+	
+	public void addCar(Car car) {
+		this.cars.add(car);
 	}
 
 	public void paintComponent(Graphics g) {

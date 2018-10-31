@@ -1,5 +1,8 @@
 package main;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
@@ -9,30 +12,39 @@ import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 
 public class CarSpawner extends Agent {
+	
 	private ContainerController container;
+	private Map mapa;
+	public static int index=0;
+
 	
-	private int carID;
-	
-	public CarSpawner(ContainerController container) {
+	public CarSpawner(ContainerController container, Map mapa) {
 		this.container = container;
-		this.carID = 0;
+		this.mapa = mapa;
 	}
 	
 	public void setup() {
-		//TODO - Usar paginas amarelas para obter carros atuais, para nao exceder um certo valor
 		
+
 		addBehaviour(new WakerBehaviour(this,0) {
 			protected void handleElapsedTimeout() {
-				AgentController ac1;
+				
+				Random r = new Random();
+				int result = r.nextInt(4-1) + 1;
+				
+				Car newCar = new Car(""+result);
+				mapa.addCar(newCar);
+				
+				AgentController ac4;
 				try {
-					Car car = new Car(/*ID;Velocidade;Forma de passar estrutura da rua*/);
-					ac1 = container.acceptNewAgent("car-"+carID++,car);
-					ac1.start();
-				}catch(StaleProxyException e) {
+					ac4 = container.acceptNewAgent("car"+index++, newCar);
+					ac4.start();
+				} catch (StaleProxyException e) {
 					e.printStackTrace();
 				}
 				
-				this.reset(1000 + (int)(Math.random() * 1000));
+ 
+				this.reset(3000 + (int)(Math.random() * 1000));
 			}
 		});
 	}

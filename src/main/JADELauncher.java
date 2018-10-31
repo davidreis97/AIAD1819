@@ -18,58 +18,44 @@ public class JADELauncher {
 
 		Profile p1 = new ProfileImpl();
 		ContainerController mainContainer = rt.createMainContainer(p1);
-
-		// Cars in the road
-		ArrayList<Car> cars = new ArrayList<Car>();
-		
-		// create a new car in the road 1  
-		Car c1 = new Car("1");
-		cars.add(c1);
-		
-		// create a new car in the road 2 
-		Car c2 = new Car("2");
-		cars.add(c2);
-		
+				
 		//CarControllerAgent
 		CarControllerAgent carController = new CarControllerAgent();
 		
-		AgentController ac2;
-		try {
-			ac2 = mainContainer.acceptNewAgent("CarControllerAgent", carController);
-			ac2.start();
-		} catch (StaleProxyException e) {
-			e.printStackTrace();
-		}
-		
-		
 		AgentController ac1;
 		try {
-			ac1 = mainContainer.acceptNewAgent("car1", c1);
+			ac1 = mainContainer.acceptNewAgent("CarControllerAgent", carController);
 			ac1.start();
 		} catch (StaleProxyException e) {
 			e.printStackTrace();
 		}
-		
-		
-		AgentController ac4;
+
+
+		//RMA
+		AgentController ac2;
 		try {
-			ac4 = mainContainer.acceptNewAgent("car2", c2);
-			ac4.start();
+			ac2 = mainContainer.acceptNewAgent("myRMA", new jade.tools.rma.rma());
+			ac2.start();
 		} catch (StaleProxyException e) {
 			e.printStackTrace();
 		}
-		
+
+		 
+		/* Draw the map */
+		Map mapa = new Map(new ArrayList<Car>());
+
+		//CarSpawner
+		CarSpawner carSpawner = new CarSpawner(mainContainer, mapa);
+				
 		AgentController ac3;
 		try {
-			ac3 = mainContainer.acceptNewAgent("myRMA", new jade.tools.rma.rma());
+			ac3 = mainContainer.acceptNewAgent("CarSpawner", carSpawner);
 			ac3.start();
 		} catch (StaleProxyException e) {
 			e.printStackTrace();
 		}
-		 
-		/* Draw the map */
-		Map mapa = new Map(cars);
-
+		
+		
 		Runnable myRunnable = new Runnable() {
 			public void run() {
 
@@ -83,6 +69,7 @@ public class JADELauncher {
 			}
 		};
 		myRunnable.run();
+		
 	}
 
 }

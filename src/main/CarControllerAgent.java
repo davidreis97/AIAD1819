@@ -32,7 +32,7 @@ public class CarControllerAgent extends Agent {
 					ACLMessage reply = msg.createReply();
 					reply.setPerformative(ACLMessage.INFORM); 
 					try {
-						reply.setContentObject(lista); //Cada carro usa a sua propria informacao para determinar se avanca - provavelmente fica mais fixe se eles falarem uns com os outros com paginas amarelas sem controlador mas dps ve-se isso
+						reply.setContentObject(lista); 
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -41,14 +41,12 @@ public class CarControllerAgent extends Agent {
 					try {
 						
 						lista.put(msg.getSender(), (Car)msg.getContentObject() );
-						//System.out.println(lista);
 									
 					} catch (UnreadableException e) {
 						
 						e.printStackTrace();
 					}
-					
-					
+		
 				}
 				 
 			} else {

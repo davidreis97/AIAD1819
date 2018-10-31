@@ -16,55 +16,56 @@ public class Car extends Agent {
 	// private double curVel; //velocity
 	// private double velMax;
 
-	public Point location; // location
-	public Point velocity;
-	public Point size;
-	
+	public Point location;	// location
+	public Point velocity;	// velocity
+	public Point size;		// car size
+		
+	/* Road that the car will travel */
 	private Point startPoint;
 	private Point interPoint;
 	private Point stopPoint;
 	private String road;
 
-	public Car(String road) {
+	
+	public Car(String road){
 				
-		this.size = new Point(1,1); //No futuro podemos ter carros de tamanho diferente
-		
+		this.size = new Point(1,1);  
 		this.road = road;
 
 		switch (road) {
 
 		case "1":
-			this.startPoint = Map.r1StartPoint;
-			this.interPoint = Map.r1InterPoint;
-			this.stopPoint = Map.r1StopPoint;
-			this.velocity = new Point(0.1,0); //Depende da faixa em que ele estiver, daí estar dentro do switch, ok claudia?
+			this.startPoint = new Point(Map.r1StartPoint);
+			this.interPoint = new Point(Map.r1InterPoint);
+			this.stopPoint = new Point(Map.r1StopPoint);
+			this.velocity = new Point(0.1,0); //Ok David, faz todo o sentido 
 			break;
 		case "2":
-			this.startPoint = Map.r2StartPoint;
-			this.interPoint = Map.r2InterPoint;
-			this.stopPoint = Map.r2StopPoint;
+			this.startPoint = new Point(Map.r2StartPoint);
+			this.interPoint = new Point(Map.r2InterPoint);
+			this.stopPoint = new Point(Map.r2StopPoint);
 			this.velocity = new Point(0,-0.1);
 		case "3":
-			this.startPoint = Map.r3StartPoint;
-			this.interPoint = Map.r3InterPoint;
-			this.stopPoint = Map.r3StopPoint;
+			this.startPoint = new Point(Map.r3StartPoint);
+			this.interPoint = new Point(Map.r3InterPoint);
+			this.stopPoint = new Point(Map.r3StopPoint);
 			this.velocity = new Point(-0.1,0);
 		case "4":
-			this.startPoint = Map.r4StartPoint;
-			this.interPoint = Map.r4InterPoint;
-			this.stopPoint = Map.r4StopPoint;
+			this.startPoint = new Point(Map.r4StartPoint);
+			this.interPoint = new Point(Map.r4InterPoint);
+			this.stopPoint = new Point(Map.r4StopPoint);
 			this.velocity = new Point(0,0.1);
 		}
 
-		System.out.println("Hello this is mr car");
+		
 
 		this.location = startPoint;
-		// this.carID = id++;
+		
+		System.out.println("Hello this is mr car"+ this.startPoint);
 	}
 
+	
 	public void setup() {
-
-		//sendPosition(); //Porque enviar uma vez como inform? Tem mesmo de se enviar no inicio do carro?
 
 		addBehaviour(new TickerBehaviour(this, 200) {
 
@@ -78,6 +79,7 @@ public class Car extends Agent {
 				if (answer != null) {
 
 					if (answer.getPerformative() == ACLMessage.INFORM) {
+						
 						HashMap<AID, Car> lista = null;
 						
 						try {
@@ -89,7 +91,7 @@ public class Car extends Agent {
 						boolean canMove = true;
 
 						for (HashMap.Entry<AID, Car> entry : lista.entrySet()) {
-							if (entry.getKey() == this.getAgent().getAID()){ //Nao verificar perigo de colisao com ele proprio
+							if (entry.getKey() == this.getAgent().getAID()){ // Nao verificar perigo de colisao com ele proprio
 								continue;
 							}
 							
@@ -99,7 +101,7 @@ public class Car extends Agent {
 							}
 						}	
 						
-						if (isOutOfBounds()) { // TODO end
+						if (isOutOfBounds()) {  
 							this.myAgent.doDelete();
 							return;
 						}
@@ -142,7 +144,8 @@ public class Car extends Agent {
 		double By1 = otherCar.location.y;
 		double By2 = otherCar.location.y + otherCar.size.y;
 		
-		//IDEIA - Se eles ficarem os dois bloqueados (ambos no bloco de colisao um do outro) falam um com um outro para determinar qual dos dois avanca (é pro 20)
+		//IDEIA - Se eles ficarem os dois bloqueados (ambos no bloco de colisao um do outro) 
+		//falam um com um outro para determinar qual dos dois avanca (é pro 20)
 		
 		//Calculate size of our collision box
 		if(velocity.x > 0) {
@@ -176,7 +179,12 @@ public class Car extends Agent {
 			return false;
 		}
 	}
-
+	
+	
+	/*
+	 *  Sends the car object to the CarControllerAgent as a REQUEST,
+	 *  and later receives the list of all the cars as a INFORM
+	 */
 	public void sendPosition() {
 
 		ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
