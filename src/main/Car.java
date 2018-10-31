@@ -45,11 +45,13 @@ public class Car extends Agent {
 			this.interPoint = new Point(Map.r2InterPoint);
 			this.stopPoint = new Point(Map.r2StopPoint);
 			this.velocity = new Point(0,-0.1);
+			break;
 		case "3":
 			this.startPoint = new Point(Map.r3StartPoint);
 			this.interPoint = new Point(Map.r3InterPoint);
 			this.stopPoint = new Point(Map.r3StopPoint);
 			this.velocity = new Point(-0.1,0);
+			break;
 		case "4":
 			this.startPoint = new Point(Map.r4StartPoint);
 			this.interPoint = new Point(Map.r4InterPoint);
@@ -61,7 +63,7 @@ public class Car extends Agent {
 
 		this.location = startPoint;
 		
-		System.out.println("Hello this is mr car"+ this.startPoint);
+		System.out.println("Hello this is mr car. Road: "+road);
 	}
 
 	
@@ -106,7 +108,7 @@ public class Car extends Agent {
 							return;
 						}
 						
-						System.out.println(location);
+						//System.out.println(location);
 
 						if(canMove) {
 							location.add(velocity);
