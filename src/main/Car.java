@@ -1,12 +1,16 @@
 package main;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+import jade.lang.acl.MessageTemplate;
 
 public class Car extends Agent {
 
@@ -19,11 +23,15 @@ public class Car extends Agent {
 	private Point interPoint;
 	private Point stopPoint;
 	private String road;
+	private boolean moving;
+	private ArrayList<AID> waitingCars;
 
 	public Car(String road) {
 
 		this.size = new Point(1, 1);
 		this.road = road;
+		this.moving = true;
+		this.waitingCars = new ArrayList<AID>();
 
 		switch (road) {
 
@@ -65,10 +73,14 @@ public class Car extends Agent {
 			@Override
 			protected void onTick() {
 
+				if (!moving) {
+					return ;
+				}
+
 				boolean inIntersection = false;
 
 				if (inIntersection()) {
-					
+
 					inIntersection = true;
 					sendPosition("IntersectionAgent", ACLMessage.REQUEST);
 					sendPosition("RoadAgent" + road, ACLMessage.INFORM);
@@ -104,14 +116,44 @@ public class Car extends Agent {
 
 							if (collisionRisk(entry.getValue())) {
 								canMove = false;
+
+								/*
+								 * IDEIA: Se nao se encontra numa intersecao avisa o carro da frente q esta a
+								 * espera q ele ande assim n precisa de estar sempre a perguntar ao roadAgent
+								 */
+
+								if (!inIntersection) {
+
+									System.out.println("waiting!!");
+									ACLMessage msg = new ACLMessage(ACLMessage.REQUEST_WHEN);
+									AID dest = entry.getKey();
+									msg.addReceiver(dest);
+									send(msg);
+									moving = false;
+									addBehaviour(new Cenas2());
+								}
+
 								break;
 							}
 						}
 
 						if (canMove) {
 							location.add(velocity);
+
+							// Send a message to each car, saying that i moved
+							if (!waitingCars.isEmpty()) {
+								for (AID car : waitingCars) {
+
+									System.out.println("an agent is no longer waiting" + car);
+
+									ACLMessage msg = new ACLMessage(ACLMessage.PROPAGATE);
+									msg.addReceiver(car);
+									send(msg);
+								}
+							}
+							waitingCars.clear();
 						}
-						
+
 						if (isOutOfBounds()) {
 							this.myAgent.doDelete();
 							return;
@@ -120,8 +162,9 @@ public class Car extends Agent {
 						if (inIntersection && !inIntersection()) {
 							removeCar("IntersectionAgent");
 						}
-						
-					}
+
+					}  
+
 				} else {
 					block();
 				}
@@ -129,8 +172,52 @@ public class Car extends Agent {
 			}
 
 		});
+
+		addBehaviour(new Cenas());
+
+	}
+
+	class Cenas extends CyclicBehaviour {
+
+		public void action() {
+
+			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.REQUEST_WHEN);
+			ACLMessage msg = receive(mt);
+
+			if (msg != null) {
+				
+				// Add to cars waiting for me to move
+				waitingCars.add(msg.getSender());
+				System.out.println("an agent is waiting" + msg.getSender());
+				 
+			}
+			else {
+				block();
+			}
+		}
 	}
 	
+	class Cenas2 extends Behaviour {
+		
+		public void action() {
+			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE);
+			ACLMessage msg = receive(mt);
+			if (msg != null) {
+				if (msg.getPerformative() == ACLMessage.PROPAGATE) {
+					System.out.println("moving!!");
+					moving = true;
+				}
+			} else {
+				block();
+			}
+		}
+
+		public boolean done() {
+			return moving == true;
+		}
+		
+	}
+
 	/*
 	 * Checks if the car is out of bounds
 	 */
@@ -141,7 +228,7 @@ public class Car extends Agent {
 			return false;
 		}
 	}
-	
+
 	/*
 	 * Checks if the car is in the intersection
 	 */
@@ -178,7 +265,7 @@ public class Car extends Agent {
 			Ax1 = location.x;
 			Ax2 = location.x + size.x;
 			Ay1 = location.y - threshold;
-			Ay2 = location.y + size.y ;
+			Ay2 = location.y + size.y;
 		} else {
 			System.out.println("Car has 0 velocity, bugged or out of fuel? Probably bugged.");
 		}
@@ -269,25 +356,24 @@ public class Car extends Agent {
 		msg.addReceiver(dest);
 		send(msg);
 	}
-	
- 
+
 	/*
 	 * Sends the message to remove the agent from a list
 	 */
 	public void removeCar(String agent) {
 
-		ACLMessage msg = new ACLMessage(ACLMessage.FAILURE);  
+		ACLMessage msg = new ACLMessage(ACLMessage.FAILURE);
 
 		AID dest = this.getAID(agent);
 		msg.addReceiver(dest);
 		send(msg);
 	}
-	
+
 	/*
 	 * Deletes an agent
 	 */
 	public void takeDown() {
-		
+
 		removeCar("RoadAgent" + this.road);
 
 		System.out.println("Car is done");
