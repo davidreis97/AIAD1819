@@ -38,15 +38,15 @@ public class IntersectionAgent extends Agent {
 			if(msg != null) {
  
 				if(msg.getPerformative() == ACLMessage.REQUEST) {
-					
+			 
 					try {
-						
+					
 						// get car location
 						Point location = (Point)msg.getContentObject();
 						
 						//save
 						lista.put(msg.getSender(), location);
-						 
+						
 						//send list
 						ACLMessage reply = msg.createReply();
 						reply.setPerformative(ACLMessage.INFORM); 

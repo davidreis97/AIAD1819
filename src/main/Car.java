@@ -1,7 +1,6 @@
 package main;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import jade.core.AID;
 import jade.core.Agent;
@@ -11,6 +10,26 @@ import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import jade.lang.acl.MessageTemplate;
+
+/* * * * * * * * * * * * * PARA O DAVID LER  * * * * * * * * * * * * * * 
+ * 
+ *  A ideia é: 
+ *  Um carro entra numa rua, informa o RoadAgent que entrou atraves de 'SUBSCRIBE'
+ * 	Recebe informacao se tem algum carro á frente através de 'CONFIRM'
+ *  O carro da sua frente entretanto recebe um 'PROPOSE' informando que agora tem um carro atras dele.
+ *  Assim, sempre que ele se move, manda-lhe a sua nova posição atraves de 'PROPAGATE'
+ *  
+ *  Um carro antes de andar ve se vai contra o da frente e manda a sua posiçao para o de tras, para ele
+ *  conseguir fazer o mesmo.
+ *  
+ *  Assim, nao temos de tar sempre a verificar colisoes com todos os carros da rua, quando obviamente
+ *  so iamos bater no que esta a nossa frente.
+ *  
+ *  A interseçao para ja continua a funcionar da mesma forma. Tem uma lista com todos os carros que la estao.
+ *  Acho que podemos melhorar com algoritmos de seleçao, e assim e tb o que falaste de se ambos tiverem bloqueados,
+ *  comunicar um com o outro para decidir.
+ * 
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 public class Car extends Agent {
 
@@ -23,15 +42,18 @@ public class Car extends Agent {
 	private Point interPoint;
 	private Point stopPoint;
 	private String road;
-	private boolean moving;
-	private ArrayList<AID> waitingCars;
+
+	private AID frontCar, backCar;
+	private Point frontCar_position;
 
 	public Car(String road) {
 
+		this.frontCar = null;
+		this.backCar = null;
+		this.frontCar_position = null;
+		
 		this.size = new Point(1, 1);
 		this.road = road;
-		this.moving = true;
-		this.waitingCars = new ArrayList<AID>();
 
 		switch (road) {
 
@@ -68,34 +90,34 @@ public class Car extends Agent {
 
 	public void setup() {
 
+		addBehaviour(new InitBehaviour());
+
+		// Behavior that represents the car moving
+
 		addBehaviour(new TickerBehaviour(this, 100) {
 
 			@Override
 			protected void onTick() {
 
-				if (!moving) {
-					return ;
+				// send my position to the back car
+				if (backCar != null) {
+					sendPosition(backCar, ACLMessage.PROPAGATE);
 				}
 
 				boolean inIntersection = false;
+				boolean canMove = true;
 
 				if (inIntersection()) {
 
 					inIntersection = true;
-					sendPosition("IntersectionAgent", ACLMessage.REQUEST);
-					sendPosition("RoadAgent" + road, ACLMessage.INFORM);
+					AID agent = getAID("IntersectionAgent");
+					sendPosition(agent, ACLMessage.REQUEST);
 
-				} else {
+					MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
+					ACLMessage answer = receive(mt);
 
-					sendPosition("RoadAgent" + road, ACLMessage.REQUEST);
-				}
-
-				ACLMessage answer = receive();
-
-				if (answer != null) {
-
-					if (answer.getPerformative() == ACLMessage.INFORM) {
-
+					if (answer != null) {
+			
 						HashMap<AID, Point> lista = null;
 
 						try {
@@ -104,8 +126,6 @@ public class Car extends Agent {
 						} catch (UnreadableException e) {
 							e.printStackTrace();
 						}
-
-						boolean canMove = true;
 
 						// check collisions
 						for (HashMap.Entry<AID, Point> entry : lista.entrySet()) {
@@ -116,106 +136,155 @@ public class Car extends Agent {
 
 							if (collisionRisk(entry.getValue())) {
 								canMove = false;
-
-								/*
-								 * IDEIA: Se nao se encontra numa intersecao avisa o carro da frente q esta a
-								 * espera q ele ande assim n precisa de estar sempre a perguntar ao roadAgent
-								 */
-
-								if (!inIntersection) {
-
-									System.out.println("waiting!!");
-									ACLMessage msg = new ACLMessage(ACLMessage.REQUEST_WHEN);
-									AID dest = entry.getKey();
-									msg.addReceiver(dest);
-									send(msg);
-									moving = false;
-									addBehaviour(new Cenas2());
-								}
-
 								break;
 							}
 						}
 
-						if (canMove) {
-							location.add(velocity);
-
-							// Send a message to each car, saying that i moved
-							if (!waitingCars.isEmpty()) {
-								for (AID car : waitingCars) {
-
-									System.out.println("an agent is no longer waiting" + car);
-
-									ACLMessage msg = new ACLMessage(ACLMessage.PROPAGATE);
-									msg.addReceiver(car);
-									send(msg);
-								}
-							}
-							waitingCars.clear();
-						}
-
-						if (isOutOfBounds()) {
-							this.myAgent.doDelete();
-							return;
-						}
-
-						if (inIntersection && !inIntersection()) {
-							removeCar("IntersectionAgent");
-						}
-
-					}  
+					} else {
+						block();
+					}
 
 				} else {
-					block();
+
+					// see if I can move (front car)
+					if (frontCar != null && frontCar_position != null) {
+
+						canMove = !collisionRisk(frontCar_position);
+
+					}
+				}
+
+				if (canMove) {
+					location.add(velocity);
+				}
+
+				if (inIntersection && !inIntersection()) {
+					removeCar("IntersectionAgent");
+				}
+
+				if (isOutOfBounds()) {
+					this.myAgent.doDelete();
+					return;
 				}
 
 			}
 
 		});
 
-		addBehaviour(new Cenas());
-
+		addBehaviour(new BackCar());
+		addBehaviour(new FrontCarPosition());
+		addBehaviour(new BackCarEnd());
 	}
 
-	class Cenas extends CyclicBehaviour {
+	/*
+	 * Subscribe the road and receives the car in front. O behaviour acaba logo, é
+	 * so para iniciar
+	 */
+	class InitBehaviour extends Behaviour {
+
+		boolean received = false;
 
 		public void action() {
 
-			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.REQUEST_WHEN);
-			ACLMessage msg = receive(mt);
+			ACLMessage msg = new ACLMessage(ACLMessage.SUBSCRIBE);
+			msg.addReceiver(getAID("RoadAgent" + road));
+			send(msg);
 
-			if (msg != null) {
-				
-				// Add to cars waiting for me to move
-				waitingCars.add(msg.getSender());
-				System.out.println("an agent is waiting" + msg.getSender());
-				 
-			}
-			else {
-				block();
-			}
-		}
-	}
-	
-	class Cenas2 extends Behaviour {
-		
-		public void action() {
-			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE);
-			ACLMessage msg = receive(mt);
-			if (msg != null) {
-				if (msg.getPerformative() == ACLMessage.PROPAGATE) {
-					System.out.println("moving!!");
-					moving = true;
+			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CONFIRM);
+
+			ACLMessage msg2 = receive(mt);
+			if (msg2 != null) {
+
+				AID response;
+				try {
+					response = (AID) msg2.getContentObject();
+
+					if (response != null) {	//pode ser null se n tiver carro a frente
+						frontCar = response;
+					}
+
+				} catch (UnreadableException e) {
+					e.printStackTrace();
 				}
+				received = true;
+
 			} else {
 				block();
 			}
 		}
 
 		public boolean done() {
-			return moving == true;
+			return received == true;
 		}
-		
+	}
+
+	// Informaram q tem um carro atras
+	class BackCar extends CyclicBehaviour {
+
+		public void action() {
+
+			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.PROPOSE);
+			ACLMessage msg = receive(mt);
+
+			if (msg != null) {
+
+				AID response;
+				try {
+
+					response = (AID) msg.getContentObject();
+					backCar = response;
+
+				} catch (UnreadableException e) {
+					e.printStackTrace();
+				}
+
+			} else {
+				block();
+			}
+		}
+	}
+	
+	//Informaram q carro da frente ja terminou percurso 
+	class BackCarEnd extends CyclicBehaviour {
+
+		public void action() {
+
+			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.FAILURE);
+			ACLMessage msg = receive(mt);
+
+			if (msg != null) {
+				frontCar = null;
+			} else {
+				block();
+			}
+		}
+	}
+
+	
+	// Recebendo posicao do carro da frente
+	class FrontCarPosition extends CyclicBehaviour {
+
+		public void action() {
+
+			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE);
+			ACLMessage msg = receive(mt);
+
+			if (msg != null) {
+
+				Point location;
+				try {
+					location = (Point) msg.getContentObject();
+					frontCar_position = location;
+
+				} catch (UnreadableException e) {
+
+					e.printStackTrace();
+				}
+
+			} else {
+				block();
+			}
+		}
 	}
 
 	/*
@@ -342,7 +411,7 @@ public class Car extends Agent {
 	/*
 	 * Sends the car position to another agent
 	 */
-	public void sendPosition(String agent, int type) {
+	public void sendPosition(AID agent, int type) {
 
 		ACLMessage msg = new ACLMessage(type);
 
@@ -352,8 +421,7 @@ public class Car extends Agent {
 			e.printStackTrace();
 		}
 
-		AID dest = this.getAID(agent);
-		msg.addReceiver(dest);
+		msg.addReceiver(agent);
 		send(msg);
 	}
 

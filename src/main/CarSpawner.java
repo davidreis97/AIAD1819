@@ -10,7 +10,7 @@ import jade.wrapper.StaleProxyException;
 
 public class CarSpawner extends Agent {
 	
-	public static final int SPAWN_TIME = 1;	//s
+	public static final int SPAWN_TIME = 2;	//s
 	public static final int SPAWN_INTERVAL = 1;	//s
 	
 	private ContainerController container;
@@ -20,7 +20,6 @@ public class CarSpawner extends Agent {
 	public CarSpawner(ContainerController container, Map mapa) {
 		this.container = container;
 		this.mapa = mapa;
- 
 	}
 	
 	public void setup() {

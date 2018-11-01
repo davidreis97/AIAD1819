@@ -1,6 +1,7 @@
 package main;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import jade.core.AID;
 import jade.core.Agent;
@@ -11,10 +12,8 @@ import jade.lang.acl.UnreadableException;
 /*
  * Este agente é responsavel por 'guardar' os agentes que se encontram numa rua
  * 
- * -->'INFORM'
- * 		- apenas atualiza a posicao do carro
- * -->'REQUEST'
- *      - responde com 'INFORM' uma lista com os carros e atualiza a posiçao recebida;
+ * -->'SUBSCRIBE'
+ *      - adiciona carro a lista, responde com carro da frente, e manda ao carro da frente o carro de tras
  * -->'FAILURE' 
  *      - um determinado agente já nao se encontra na rua, e é apagado da lista;
  *     
@@ -22,12 +21,12 @@ import jade.lang.acl.UnreadableException;
 
 public class RoadAgent extends Agent {
 
-	HashMap<AID, Point> lista;
+	ArrayList<AID> carros;
 
 	public void setup() {
 
 		addBehaviour(new ListeningBehaviour());
-		lista = new HashMap<AID, Point>();
+		carros = new ArrayList<AID>();
 	}
 
 	class ListeningBehaviour extends CyclicBehaviour {
@@ -38,47 +37,65 @@ public class RoadAgent extends Agent {
 
 			if (msg != null) {
 
-				if (msg.getPerformative() == ACLMessage.REQUEST) {
+				if (msg.getPerformative() == ACLMessage.SUBSCRIBE) {
 
+					if (!carros.contains(msg.getSender()))
+						carros.add(msg.getSender());
+
+					
+					// check if the car has a car in front of him
+					AID front_car = null;
+
+					int index = carros.indexOf(msg.getSender());
+					if (index != 0) {
+						front_car = carros.get(index - 1);
+					}
+
+					/*
+					 * Informa este carro que tem um a frente e o da frente q tem um atras
+					 */
+
+					ACLMessage reply = msg.createReply();
+					reply.setPerformative(ACLMessage.CONFIRM);
 					try {
+						reply.setContentObject(front_car);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					send(reply);
 
-						// car location
-						Point location = (Point) msg.getContentObject();
+					if (index != 0) {	//inform the front car
 
-						// save
-						lista.put(msg.getSender(), location);
+						ACLMessage new_msg = new ACLMessage(ACLMessage.PROPOSE);
 
-						// send list
-						ACLMessage reply = msg.createReply();
-						reply.setPerformative(ACLMessage.INFORM);
 						try {
-							reply.setContentObject(lista);
-						} catch (IOException e1) {
-							e1.printStackTrace();
+							new_msg.setContentObject(msg.getSender());
+						} catch (IOException e) {
+							e.printStackTrace();
 						}
-						send(reply);
 
-					} catch (UnreadableException e2) {
-						// TODO Auto-generated catch block
-						e2.printStackTrace();
+						new_msg.addReceiver(front_car);
+						send(new_msg);
+
 					}
 
 				} else if (msg.getPerformative() == ACLMessage.FAILURE) {
 
-					// remove car
-					lista.remove(msg.getSender());
-				
-				} else if (msg.getPerformative() == ACLMessage.INFORM) {
+					// Informa o carro de tras que ja nao tem carro a frente
 
-					// update car
-					try {
-						Point location = (Point) msg.getContentObject();
-						lista.put(msg.getSender(), location);
-						
-					} catch (UnreadableException e) {
-						e.printStackTrace();
+					if (carros.size() >= 2) {
+
+						int index = carros.indexOf(msg.getSender());
+						AID backCar = carros.get(index + 1);
+
+						ACLMessage new_msg = new ACLMessage(ACLMessage.FAILURE);
+						new_msg.addReceiver(backCar);
+						send(new_msg);
 					}
-					
+
+					// remove car
+					carros.remove(msg.getSender());
+
 				}
 
 			} else {
