@@ -27,7 +27,7 @@ import jade.lang.acl.MessageTemplate;
  *  
  *  A interseçao para ja continua a funcionar da mesma forma. Tem uma lista com todos os carros que la estao.
  *  Acho que podemos melhorar com algoritmos de seleçao, e assim e tb o que falaste de se ambos tiverem bloqueados,
- *  comunicar um com o outro para decidir.
+ *  comunicar um com o outro para decidir, pq ainda ha acidentes.
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
