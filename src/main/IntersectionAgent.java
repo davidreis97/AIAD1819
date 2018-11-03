@@ -1,77 +1,86 @@
 package main;
 
-import java.io.IOException;
+
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
-import jade.lang.acl.UnreadableException;
 
-
-/*
- * Este agente é responsavel por 'guardar' os agentes que se encontram numa interseçao
- * 
- * -->'REQUEST'
- *      - responde com 'INFORM' uma lista com os carros e atualiza a posiçao recebida;
- * -->'FAILURE' 
- *      - um determinado agente já nao se encontra no cruzamento, e é apagado da lista;
- *     
- */
 
 public class IntersectionAgent extends Agent {
-	
-	HashMap<AID, Point> lista;
-	 
-	public void setup() {
-		
-		addBehaviour(new ListeningBehaviour());
-		lista = new HashMap<AID, Point>();
-	}
-	
-	class ListeningBehaviour extends CyclicBehaviour {
-		
-		public void action() {
-			
-			ACLMessage msg = receive();
-			
-			if(msg != null) {
- 
-				if(msg.getPerformative() == ACLMessage.REQUEST) {
-			 
-					try {
-					
-						// get car location
-						Point location = (Point)msg.getContentObject();
-						
-						//save
-						lista.put(msg.getSender(), location);
-						
-						//send list
-						ACLMessage reply = msg.createReply();
-						reply.setPerformative(ACLMessage.INFORM); 
-						try {
-							reply.setContentObject(lista); 
-						} catch (IOException e1) {
-							e1.printStackTrace();
-						}
-						send(reply);
-						
 
-					} catch (UnreadableException e2) {
-						e2.printStackTrace();
+	public enum SelectionAlgorithm {
+		FIRST_COME_FIRST_SERVED, COLLISION_DETECTION
+	}
+	public static final SelectionAlgorithm ALGORITHM = SelectionAlgorithm.FIRST_COME_FIRST_SERVED; 
+	
+	
+	Queue<AID> waitingCars;
+	boolean intersectionOccupied = false;
+	AID intersectionCar = null;
+ 
+	public void setup() {
+
+		this.waitingCars = new LinkedList<AID>();
+		
+		if(ALGORITHM == SelectionAlgorithm.FIRST_COME_FIRST_SERVED) {
+			addBehaviour(new FirstComeFirstServedBehaviour());
+		}
+		
+	}
+
+	class FirstComeFirstServedBehaviour extends CyclicBehaviour {
+
+		public void action() {
+
+			ACLMessage msg = receive();
+
+			if (msg != null) {
+
+				if (msg.getPerformative() == ACLMessage.REQUEST) {
+
+					if (!intersectionOccupied) {
+
+						intersectionOccupied = true;
+						intersectionCar = msg.getSender();
+
+						ACLMessage reply = msg.createReply();
+						reply.setPerformative(ACLMessage.INFORM);
+						send(reply);
+
+					} else {
+
+						if (!msg.getSender().equals(intersectionCar) && !waitingCars.contains(msg.getSender())) {
+							
+							waitingCars.add(msg.getSender());
+						}
 					}
-					
-				}else if(msg.getPerformative() == ACLMessage.FAILURE) {
-					
-					//remove car from list
-					lista.remove(msg.getSender());
-				} 
+
+				} else if (msg.getPerformative() == ACLMessage.FAILURE) {
+
+					if (msg.getSender().equals(intersectionCar)) {
+						
+						intersectionOccupied = false;
+
+						if (!waitingCars.isEmpty()) {
+							intersectionCar = waitingCars.poll();
+
+							intersectionOccupied = true;
+
+							ACLMessage msg2 = new ACLMessage(ACLMessage.INFORM);
+							msg2.addReceiver(intersectionCar);
+							send(msg2);
+
+						}
+					}
+				}
 			} else {
 				block();
 			}
 		}
+	}
 
-	}	
-	 
 }

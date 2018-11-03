@@ -46,14 +46,20 @@ public class Car extends Agent {
 	private AID frontCar, backCar;
 	private Point frontCar_position;
 
+	private boolean waitingIntersection;
+	private boolean inIntersection;
+
 	public Car(String road) {
 
 		this.frontCar = null;
 		this.backCar = null;
 		this.frontCar_position = null;
-		
+
 		this.size = new Point(1, 1);
 		this.road = road;
+
+		this.waitingIntersection = false;
+		this.inIntersection = false;
 
 		switch (road) {
 
@@ -104,53 +110,27 @@ public class Car extends Agent {
 					sendPosition(backCar, ACLMessage.PROPAGATE);
 				}
 
-				boolean inIntersection = false;
-				boolean canMove = true;
-
-				if (inIntersection()) {
-
-					inIntersection = true;
-					AID agent = getAID("IntersectionAgent");
-					sendPosition(agent, ACLMessage.REQUEST);
-
-					MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
-					ACLMessage answer = receive(mt);
-
-					if (answer != null) {
-			
-						HashMap<AID, Point> lista = null;
-
-						try {
-							lista = (HashMap<AID, Point>) answer.getContentObject();
-
-						} catch (UnreadableException e) {
-							e.printStackTrace();
-						}
-
-						// check collisions
-						for (HashMap.Entry<AID, Point> entry : lista.entrySet()) {
-
-							if (entry.getKey().equals(this.getAgent().getAID())) {
-								continue;
-							}
-
-							if (collisionRisk(entry.getValue())) {
-								canMove = false;
-								break;
-							}
-						}
-
-					} else {
-						block();
+				boolean canMove = false;
+				
+				if(inIntersection()) {
+					
+					if(!inIntersection && !waitingIntersection) {	//first time here
+						waitingIntersection = true;
+						addBehaviour(new WaitingIntersection());
 					}
-
-				} else {
+					else if(inIntersection){
+						canMove = true;
+					}
+					
+				}  else {
 
 					// see if I can move (front car)
 					if (frontCar != null && frontCar_position != null) {
 
 						canMove = !collisionRisk(frontCar_position);
 
+					} else {
+						canMove = true;
 					}
 				}
 
@@ -158,8 +138,9 @@ public class Car extends Agent {
 					location.add(velocity);
 				}
 
-				if (inIntersection && !inIntersection()) {
+				if (!inIntersection() && inIntersection) {
 					removeCar("IntersectionAgent");
+					inIntersection = false;
 				}
 
 				if (isOutOfBounds()) {
@@ -174,6 +155,31 @@ public class Car extends Agent {
 		addBehaviour(new BackCar());
 		addBehaviour(new FrontCarPosition());
 		addBehaviour(new BackCarEnd());
+	}
+
+	
+	class WaitingIntersection extends Behaviour {
+
+		public void action() {
+
+			AID agent = getAID("IntersectionAgent");
+			sendPosition(agent, ACLMessage.REQUEST); // manda request a perguntar se pode entrar na rua
+
+			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
+			ACLMessage answer = receive(mt);
+
+			if (answer != null) {
+		
+				inIntersection = true;
+
+			} else {
+				block();
+			}
+		}
+
+		public boolean done() {
+			return inIntersection == true;
+		}
 	}
 
 	/*
@@ -199,7 +205,7 @@ public class Car extends Agent {
 				try {
 					response = (AID) msg2.getContentObject();
 
-					if (response != null) {	//pode ser null se n tiver carro a frente
+					if (response != null) { // pode ser null se n tiver carro a frente
 						frontCar = response;
 					}
 
@@ -243,8 +249,8 @@ public class Car extends Agent {
 			}
 		}
 	}
-	
-	//Informaram q carro da frente ja terminou percurso 
+
+	// Informaram q carro da frente ja terminou percurso
 	class BackCarEnd extends CyclicBehaviour {
 
 		public void action() {
@@ -260,7 +266,6 @@ public class Car extends Agent {
 		}
 	}
 
-	
 	// Recebendo posicao do carro da frente
 	class FrontCarPosition extends CyclicBehaviour {
 
@@ -424,6 +429,8 @@ public class Car extends Agent {
 		msg.addReceiver(agent);
 		send(msg);
 	}
+
+ 
 
 	/*
 	 * Sends the message to remove the agent from a list
