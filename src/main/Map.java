@@ -10,33 +10,75 @@ import javax.swing.JPanel;
 import java.awt.*;
 
 public class Map extends JPanel {
-
+	
 	// Road 1
 	public static final Point r1StartPoint = new Point(0, 5);
-	public static final Point r1InterPoint = new Point(3, 5);
+	public static final Point r1InterPoint1 = new Point(5, 5);	//muda para 4
+	public static final Point r1InterPoint2 = new Point(6, 5);	//muda para 2
 	public static final Point r1StopPoint = new Point(9, 5);
-
+	public static final Point r1Vel = new Point(0.1,0);
+ 
 	// Road 2
 	public static final Point r2StartPoint = new Point(5, 9);
-	public static final Point r2InterPoint = new Point(5, 6);
+	public static final Point r2InterPoint1 = new Point(5, 5);	//muda para a 1
+	public static final Point r2InterPoint2 = new Point(5, 4);	//muda para a 3
 	public static final Point r2StopPoint = new Point(5, 0);
+	public static final Point r2Vel = new Point(0, -0.1);
 
 	// Road 3
 	public static final Point r3StartPoint = new Point(9, 4);
-	public static final Point r3InterPoint = new Point(6, 4);
+	public static final Point r3InterPoint1 = new Point(5, 4);	//muda para a 2
+	public static final Point r3InterPoint2 = new Point(4, 4);	//muda para a 4
 	public static final Point r3StopPoint = new Point(0, 4);
-
+	public static final Point r3Vel = new Point(-0.1, 0);
+	
 	// Road 4
 	public static final Point r4StartPoint = new Point(4, 0);
-	public static final Point r4InterPoint = new Point(4, 3);
+	public static final Point r4InterPoint1 = new Point(5, 5);	//muda para a 3
+	public static final Point r4InterPoint2 = new Point(5, 6);	//muda para a 1
 	public static final Point r4StopPoint = new Point(4, 9);
-
+	public static final Point r4Vel = new Point(0, 0.1);
+	
 	//Intersection 
 	public static final Point intersectionP = new Point(4, 4);
- 
- 
+  
 	public ArrayList<Car> cars;
-
+	
+	public static ArrayList<Path> caminhos;
+	
+	static {
+		caminhos = new ArrayList<Path>();
+		
+	 
+		Path p = new Path("1", "1", r1StartPoint, null, r1StopPoint, r1Vel, r1Vel);
+		caminhos.add(p);
+		p = new Path("1", "4", r1StartPoint, r1InterPoint1, r4StopPoint, r1Vel, r4Vel);
+		caminhos.add(p);
+		p = new Path("1", "2", r1StartPoint, r1InterPoint2, r2StopPoint, r1Vel, r2Vel);
+		caminhos.add(p);
+		p = new Path("2", "2", r2StartPoint, null, r2StopPoint, r2Vel, r2Vel);
+		caminhos.add(p);
+		p = new Path("2", "1", r2StartPoint, r2InterPoint1, r1StopPoint, r2Vel, r1Vel );
+		caminhos.add(p);
+		p = new Path("2", "3", r2StartPoint, r2InterPoint2, r3StopPoint, r2Vel, r3Vel);
+		caminhos.add(p);
+		p = new Path("3", "3", r3StartPoint, null, r3StopPoint, r3Vel, r3Vel);
+		caminhos.add(p);
+		p = new Path("3", "4", r3StartPoint, r3InterPoint2, r4StopPoint, r3Vel, r4Vel);
+		caminhos.add(p);
+		p = new Path("3", "2", r3StartPoint, r3InterPoint1, r2StopPoint, r3Vel, r2Vel);
+		caminhos.add(p);
+		p = new Path("4", "4", r4StartPoint, null, r4StopPoint, r4Vel, r4Vel);
+		caminhos.add(p);
+		p = new Path("4", "1", r4StartPoint, r4InterPoint2, r1StopPoint, r4Vel, r1Vel);
+		caminhos.add(p);
+		p = new Path("4", "3", r4StartPoint, r4InterPoint1, r3StopPoint, r4Vel, r3Vel);
+		caminhos.add(p);
+		
+		
+		
+	}
+	
 	public Map() {
 		
 		JFrame frame = new JFrame("Map");

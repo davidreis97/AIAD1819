@@ -24,14 +24,16 @@ public class CarSpawner extends Agent {
 	
 	public void setup() {
 		
-		Random r = new Random();
+		Random rnd = new Random();
 		
 		addBehaviour(new WakerBehaviour(this,0) {
 			protected void handleElapsedTimeout() {
 				
-				int result = r.nextInt(4-1) + 1;
- 
-				Car newCar = new Car(""+result);
+				int randomNum = rnd.nextInt(Map.caminhos.size());
+				
+				Path p = Map.caminhos.get(randomNum);
+				
+				Car newCar = new Car(p);
 				mapa.addCar(newCar);
 				
 				AgentController ac4;

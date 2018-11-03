@@ -1,5 +1,6 @@
 package main;
 
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.HashMap;
 import jade.core.AID;
@@ -11,89 +12,44 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import jade.lang.acl.MessageTemplate;
 
-/* * * * * * * * * * * * * PARA O DAVID LER  * * * * * * * * * * * * * * 
- * 
- *  A ideia é: 
- *  Um carro entra numa rua, informa o RoadAgent que entrou atraves de 'SUBSCRIBE'
- * 	Recebe informacao se tem algum carro á frente através de 'CONFIRM'
- *  O carro da sua frente entretanto recebe um 'PROPOSE' informando que agora tem um carro atras dele.
- *  Assim, sempre que ele se move, manda-lhe a sua nova posição atraves de 'PROPAGATE'
- *  
- *  Um carro antes de andar ve se vai contra o da frente e manda a sua posiçao para o de tras, para ele
- *  conseguir fazer o mesmo.
- *  
- *  Assim, nao temos de tar sempre a verificar colisoes com todos os carros da rua, quando obviamente
- *  so iamos bater no que esta a nossa frente.
- *  
- *  A interseçao para ja continua a funcionar da mesma forma. Tem uma lista com todos os carros que la estao.
- *  Acho que podemos melhorar com algoritmos de seleçao, e assim e tb o que falaste de se ambos tiverem bloqueados,
- *  comunicar um com o outro para decidir, pq ainda ha acidentes.
- * 
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 public class Car extends Agent {
 
 	public Point location; // location
 	public Point velocity; // velocity
+	private String road;   // road
+	
 	public Point size; // car size
-
-	/* Road that the car will travel */
-	private Point startPoint;
-	private Point interPoint;
-	private Point stopPoint;
-	private String road;
 
 	private AID frontCar, backCar;
 	private Point frontCar_position;
 
 	private boolean waitingIntersection;
 	private boolean inIntersection;
+	
+	private Path path;
 
-	public Car(String road) {
+
+	public Car(Path p) {
 
 		this.frontCar = null;
 		this.backCar = null;
 		this.frontCar_position = null;
 
-		this.size = new Point(1, 1);
-		this.road = road;
+		this.size = new Point(1, 1);	//TODO
 
 		this.waitingIntersection = false;
 		this.inIntersection = false;
-
-		switch (road) {
-
-		case "1":
-			this.startPoint = new Point(Map.r1StartPoint);
-			this.interPoint = new Point(Map.r1InterPoint);
-			this.stopPoint = new Point(Map.r1StopPoint);
-			this.velocity = new Point(0.1, 0);
-			break;
-		case "2":
-			this.startPoint = new Point(Map.r2StartPoint);
-			this.interPoint = new Point(Map.r2InterPoint);
-			this.stopPoint = new Point(Map.r2StopPoint);
-			this.velocity = new Point(0, -0.1);
-			break;
-		case "3":
-			this.startPoint = new Point(Map.r3StartPoint);
-			this.interPoint = new Point(Map.r3InterPoint);
-			this.stopPoint = new Point(Map.r3StopPoint);
-			this.velocity = new Point(-0.1, 0);
-			break;
-		case "4":
-			this.startPoint = new Point(Map.r4StartPoint);
-			this.interPoint = new Point(Map.r4InterPoint);
-			this.stopPoint = new Point(Map.r4StopPoint);
-			this.velocity = new Point(0, 0.1);
-			break;
-		}
-
-		this.location = startPoint;
-
-		System.out.println("Hello this is mr car, in road: " + road);
+		
+		this.path = p;
+		
+		this.velocity = p.initialVelocity;
+		this.location = p.startPoint; 
+		this.road = p.initialRoad;  
+		
+		System.out.println("Hello this is mr car, in road: " + p.initialRoad + ";" + p.finalRoad);
 	}
 
+	
 	public void setup() {
 
 		addBehaviour(new InitBehaviour());
@@ -137,6 +93,26 @@ public class Car extends Agent {
 				if (canMove) {
 					location.add(velocity);
 				}
+				
+				
+				if(path.midPoint!=null && inInterPoint()) {
+					velocity = path.finalVelocity;
+					
+					if(! road.equals(path.finalRoad)) {
+						
+						//mudar de road agent
+						removeCar("RoadAgent" + road);
+						
+						road = path.finalRoad;
+						
+						addBehaviour(new InitBehaviour());
+						
+					}else {
+						road = path.finalRoad;
+					}
+					
+				}
+
 
 				if (!inIntersection() && inIntersection) {
 					removeCar("IntersectionAgent");
@@ -193,6 +169,45 @@ public class Car extends Agent {
 		public void action() {
 
 			ACLMessage msg = new ACLMessage(ACLMessage.SUBSCRIBE);
+			msg.addReceiver(getAID("RoadAgent" + road));
+			send(msg);
+
+			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CONFIRM);
+
+			ACLMessage msg2 = receive(mt);
+			if (msg2 != null) {
+
+				AID response;
+				try {
+					response = (AID) msg2.getContentObject();
+
+					if (response != null) { // pode ser null se n tiver carro a frente
+						frontCar = response;
+					}
+
+				} catch (UnreadableException e) {
+					e.printStackTrace();
+				}
+				received = true;
+
+			} else {
+				block();
+			}
+		}
+
+		public boolean done() {
+			return received == true;
+		}
+	}
+	
+	//TODO amanha 
+	class InitBehaviour2 extends Behaviour {
+
+		boolean received = false;
+
+		public void action() {
+
+			ACLMessage msg = new ACLMessage(ACLMessage.REQUEST_WHENEVER);
 			msg.addReceiver(getAID("RoadAgent" + road));
 			send(msg);
 
@@ -301,6 +316,44 @@ public class Car extends Agent {
 		} else {
 			return false;
 		}
+	}
+	
+	public boolean inInterPoint() {
+	    
+		double Ax1 = 0;
+		double Ax2 = 0;
+		double Ay1 = 0;
+		double Ay2 = 0;
+
+		if (velocity.x > 0) {
+			Ax1 = location.x;
+			Ax2 = location.x + size.x;
+			Ay1 = location.y;
+			Ay2 = location.y + size.y;
+		} else if (velocity.x < 0) {
+			Ax1 = location.x;
+			Ax2 = location.x + size.x;
+			Ay1 = location.y;
+			Ay2 = location.y + size.y;
+		} else if (velocity.y > 0) {
+			Ax1 = location.x;
+			Ax2 = location.x + size.x;
+			Ay1 = location.y;
+			Ay2 = location.y + size.y;
+		} else if (velocity.y < 0) {
+			Ax1 = location.x;
+			Ax2 = location.x + size.x;
+			Ay1 = location.y;
+			Ay2 = location.y + size.y;
+		} else {
+			System.out.println("Car has 0 velocity, bugged or out of fuel? Probably bugged.");
+		}
+		
+		double x = path.midPoint.x;
+		double y = path.midPoint.y;
+		
+		return x >= Ax1 && y >= Ay1 && x <= Ax2 && y <= Ay2;             
+
 	}
 
 	/*
