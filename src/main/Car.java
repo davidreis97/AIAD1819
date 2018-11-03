@@ -100,12 +100,18 @@ public class Car extends Agent {
 					
 					if(! road.equals(path.finalRoad)) {
 						
+						/**********
+						AQUI ele tem de fazer uma cena parecida com InitBehaviour,
+
+						*/
 						//mudar de road agent
 						removeCar("RoadAgent" + road);
 						
 						road = path.finalRoad;
 						
+						// !!!!!!!
 						addBehaviour(new InitBehaviour());
+						// !!!!!!!
 						
 					}else {
 						road = path.finalRoad;
@@ -199,45 +205,7 @@ public class Car extends Agent {
 			return received == true;
 		}
 	}
-	
-	//TODO amanha 
-	class InitBehaviour2 extends Behaviour {
-
-		boolean received = false;
-
-		public void action() {
-
-			ACLMessage msg = new ACLMessage(ACLMessage.REQUEST_WHENEVER);
-			msg.addReceiver(getAID("RoadAgent" + road));
-			send(msg);
-
-			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CONFIRM);
-
-			ACLMessage msg2 = receive(mt);
-			if (msg2 != null) {
-
-				AID response;
-				try {
-					response = (AID) msg2.getContentObject();
-
-					if (response != null) { // pode ser null se n tiver carro a frente
-						frontCar = response;
-					}
-
-				} catch (UnreadableException e) {
-					e.printStackTrace();
-				}
-				received = true;
-
-			} else {
-				block();
-			}
-		}
-
-		public boolean done() {
-			return received == true;
-		}
-	}
+ 
 
 	// Informaram q tem um carro atras
 	class BackCar extends CyclicBehaviour {
