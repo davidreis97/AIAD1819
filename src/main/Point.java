@@ -29,7 +29,7 @@ public class Point implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return "(" + x + "," + y + ")";
+		return x + "," + y;
 	}
 
 	public void add(Point point) {

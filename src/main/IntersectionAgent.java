@@ -1,13 +1,13 @@
 package main;
 
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
+import main.Messages.MessageType;
 
 
 public class IntersectionAgent extends Agent {
@@ -28,9 +28,9 @@ public class IntersectionAgent extends Agent {
 		
 		if(ALGORITHM == SelectionAlgorithm.FIRST_COME_FIRST_SERVED) {
 			addBehaviour(new FirstComeFirstServedBehaviour());
-		}
-		
+		}		
 	}
+
 
 	class FirstComeFirstServedBehaviour extends CyclicBehaviour {
 
@@ -40,46 +40,71 @@ public class IntersectionAgent extends Agent {
 
 			if (msg != null) {
 
-				if (msg.getPerformative() == ACLMessage.REQUEST) {
-
-					if (!intersectionOccupied) {
-
-						intersectionOccupied = true;
-						intersectionCar = msg.getSender();
-
-						ACLMessage reply = msg.createReply();
-						reply.setPerformative(ACLMessage.INFORM);
-						send(reply);
-
-					} else {
-
-						if (!msg.getSender().equals(intersectionCar) && !waitingCars.contains(msg.getSender())) {
-							
-							waitingCars.add(msg.getSender());
-						}
+				MessageType type = Messages.getMessageType(msg.getContent());
+				
+				switch(type){
+				
+					case REQUEST_INTERSECTION:{
+						handleSubscribe(msg);
+						break;
 					}
-
-				} else if (msg.getPerformative() == ACLMessage.FAILURE) {
-
-					if (msg.getSender().equals(intersectionCar)) {
-						
-						intersectionOccupied = false;
-
-						if (!waitingCars.isEmpty()) {
-							intersectionCar = waitingCars.poll();
-
-							intersectionOccupied = true;
-
-							ACLMessage msg2 = new ACLMessage(ACLMessage.INFORM);
-							msg2.addReceiver(intersectionCar);
-							send(msg2);
-
-						}
+					case UNSUBSCRIBE:{
+						handleUnsubscribe(msg);
+						break;
+					}
+					default:{
+						break;
 					}
 				}
+				
 			} else {
 				block();
 			}
+		}
+
+		
+		private void handleUnsubscribe(ACLMessage msg) {
+			
+			if (msg.getSender().equals(intersectionCar)) {
+				
+				intersectionOccupied = false;
+
+				if (!waitingCars.isEmpty()) {
+					intersectionCar = waitingCars.poll();
+
+					intersectionOccupied = true;
+
+					ACLMessage msg2 = new ACLMessage(ACLMessage.INFORM);
+					msg2.setContent(MessageType.REQUEST_ACCEPTED.toString());
+					msg2.addReceiver(intersectionCar);
+					send(msg2);
+
+				}
+			}
+			
+		}
+
+		private void handleSubscribe(ACLMessage msg) {
+			
+			if (!intersectionOccupied) {
+
+				intersectionOccupied = true;
+				intersectionCar = msg.getSender();
+
+				ACLMessage reply = msg.createReply();
+				reply.setPerformative(ACLMessage.INFORM);
+				reply.setContent(MessageType.REQUEST_ACCEPTED.toString());
+				send(reply);
+
+			} else {
+
+				if (!msg.getSender().equals(intersectionCar) && !waitingCars.contains(msg.getSender())) {
+					
+					waitingCars.add(msg.getSender());
+					
+				}
+			}
+			
 		}
 	}
 

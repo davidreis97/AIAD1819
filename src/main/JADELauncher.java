@@ -39,6 +39,20 @@ public class JADELauncher {
 			e.printStackTrace();
 		}
 		
+
+		/* Road agents */
+		AgentController ac4;
+		
+		for(int i=1; i<=4; i++) {
+			
+			try {
+				ac4 = mainContainer.acceptNewAgent("RoadAgent"+i, new RoadAgent());
+				ac4.start();
+			} catch (StaleProxyException e) {
+				e.printStackTrace();
+			}
+			
+		}
 		
 		/* Map */ 
 		Map mapa = new Map();
@@ -54,20 +68,6 @@ public class JADELauncher {
 			e.printStackTrace();
 		}
 		
-		
-		/* Road agents */
-		AgentController ac4;
-		
-		for(int i=1; i<=4; i++) {
-			
-			try {
-				ac4 = mainContainer.acceptNewAgent("RoadAgent"+i, new RoadAgent());
-				ac4.start();
-			} catch (StaleProxyException e) {
-				e.printStackTrace();
-			}
-			
-		}
 		
 		
 		/* Draw the map */
