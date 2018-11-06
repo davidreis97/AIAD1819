@@ -1,4 +1,4 @@
-package main;
+package src.graph;
 
 public class Point implements java.io.Serializable {
 
@@ -24,7 +24,6 @@ public class Point implements java.io.Serializable {
 	public boolean equals(Object obj) {
 		Point p2 = (Point) obj;
 		return this.x == p2.x && this.y == p2.y;
-
 	}
 
 	@Override

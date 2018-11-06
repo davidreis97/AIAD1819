@@ -1,16 +1,12 @@
-package main.behaviours;
-
-import java.io.StringReader;
+package src.behaviours;
 
 import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
-import jade.lang.acl.ACLCodec.CodecException;
 import jade.lang.acl.ACLMessage;
-import jade.lang.acl.StringACLCodec;
-import main.Car;
-import main.Messages.MessageType;
-import main.Point;
-import main.Messages;
+import src.agents.Car;
+import src.resources.Messages.MessageType;
+import src.graph.Point;
+import src.resources.Messages;
 
 
 public class CarMessagesReceiver extends CyclicBehaviour{
@@ -34,7 +30,6 @@ public class CarMessagesReceiver extends CyclicBehaviour{
 
 			switch(type){
 				
-			
 				case FRONT_CAR:{
 					handleFrontCar(msg);
 					break;
@@ -77,7 +72,6 @@ public class CarMessagesReceiver extends CyclicBehaviour{
 			car.frontCar = agentID;
  
 		} else {
-			System.out.println("no front car");
 			car.frontCar = null ;
 		}
 	}
@@ -94,7 +88,6 @@ public class CarMessagesReceiver extends CyclicBehaviour{
  
 		
 		} else {
-			System.out.println("no back car");
 			car.backCar = null ;
 		}
 	}
@@ -115,8 +108,9 @@ public class CarMessagesReceiver extends CyclicBehaviour{
 	
 	
 	public void handleIntersectionAccepted(ACLMessage msg) {
-		car.inIntersection = true;
 		
+		car.getPath().setInIntersection();
+				
 	}
 	
 	

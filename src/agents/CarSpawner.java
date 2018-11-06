@@ -1,16 +1,20 @@
-package main;
+package src.agents;
 
+import java.util.ArrayList;
 import java.util.Random;
 import jade.core.Agent;
 import jade.core.behaviours.WakerBehaviour;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
+import src.graph.Map;
 
-
+/*
+ * Agent responsible for adding cars to the system
+ */
 public class CarSpawner extends Agent {
 	
-	public static final int SPAWN_TIME = 1;	//s
+	public static final int SPAWN_TIME = 100;	//s
 	public static final int SPAWN_INTERVAL = 1;	//s
 	
 	private ContainerController container;
@@ -29,11 +33,11 @@ public class CarSpawner extends Agent {
 		addBehaviour(new WakerBehaviour(this,0) {
 			protected void handleElapsedTimeout() {
 				
-				int randomNum = rnd.nextInt(Map.caminhos.size());
-				
-				Path p = Map.caminhos.get(randomNum);
-				
-				Car newCar = new Car(p);
+				int randomNum = rnd.nextInt(Map.paths.size()-1) + 1;
+
+				ArrayList<String> path = Map.paths.get(""+randomNum);
+			 
+				Car newCar = new Car(path);
 				mapa.addCar(newCar);
 				
 				AgentController ac4;
@@ -48,8 +52,5 @@ public class CarSpawner extends Agent {
 			}
 		});
 	}
-	
-	public void takeDown() {
-		
-	}
+
 }

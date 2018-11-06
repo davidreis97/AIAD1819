@@ -1,4 +1,4 @@
-package main;
+package src.main;
 
 import java.util.ArrayList;
 import javax.swing.SwingUtilities;
@@ -9,6 +9,10 @@ import jade.core.Runtime;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
+import src.agents.CarSpawner;
+import src.agents.IntersectionAgent;
+import src.agents.RoadAgent;
+import src.graph.Map;
 
 public class JADELauncher {
 
@@ -18,17 +22,25 @@ public class JADELauncher {
 
 		Profile p1 = new ProfileImpl();
 		ContainerController mainContainer = rt.createMainContainer(p1);
-				
-		/* Intersection agent */
-		IntersectionAgent carController = new IntersectionAgent();
+		
+		
+		/* Map */ 
+		Map mapa = new Map();
+		
+		
+		/* Intersection agents */
 		
 		AgentController ac1;
-		try {
-			ac1 = mainContainer.acceptNewAgent("IntersectionAgent", carController);
-			ac1.start();
-		} catch (StaleProxyException e) {
-			e.printStackTrace();
+		
+		for(int i=1; i<=Map.intersections.size(); i++) {
+			try {
+				ac1 = mainContainer.acceptNewAgent("IntersectionAgent"+i, new IntersectionAgent());
+				ac1.start();
+			} catch (StaleProxyException e) {
+				e.printStackTrace();
+			}
 		}
+		//intersections
 
 		/* RMA */
 		AgentController ac2;
@@ -43,20 +55,18 @@ public class JADELauncher {
 		/* Road agents */
 		AgentController ac4;
 		
-		for(int i=1; i<=4; i++) {
+		for(int i=1; i<=Map.roads.size(); i++) {
 			
 			try {
 				ac4 = mainContainer.acceptNewAgent("RoadAgent"+i, new RoadAgent());
+
 				ac4.start();
 			} catch (StaleProxyException e) {
 				e.printStackTrace();
 			}
 			
 		}
-		
-		/* Map */ 
-		Map mapa = new Map();
-		
+
 		/* CarSpawner */
 		CarSpawner carSpawner = new CarSpawner(mainContainer, mapa);
 		

@@ -1,6 +1,7 @@
-package main;
+package src.resources;
 
 import jade.core.AID;
+import src.graph.Point;
 
 public class Messages {
 
