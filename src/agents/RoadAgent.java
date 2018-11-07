@@ -5,6 +5,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import src.resources.Messages;
 import src.resources.Messages.*;
 
@@ -14,9 +15,12 @@ import src.resources.Messages.*;
 public class RoadAgent extends Agent {
 
 	ArrayList<AID> carros;
+	
+	private int maxCars;
 
 	public void setup() {
-
+		maxCars = 2; //Valor +- decente para o tamanho das nossas ruas neste momento
+		
 		addBehaviour(new ListeningBehaviour());
 		carros = new ArrayList<AID>();
 	}
@@ -30,20 +34,32 @@ public class RoadAgent extends Agent {
 			if (msg != null) {
 
 				MessageType type = Messages.getMessageType(msg.getContent());
-
 				switch (type) {
-
-				case SUBSCRIBE: {
-					handleSubscribe(msg);
-					break;
-				}
-				case UNSUBSCRIBE: {
-					handleUnsubscribe(msg);
-					break;
-				}
-				default: {
-					break;
-				}
+					case SUBSCRIBE: {
+						handleSubscribe(msg);
+						break;
+					}
+					case UNSUBSCRIBE: {
+						handleUnsubscribe(msg);
+						break;
+					}
+					case POLL_SPACE:{
+						if(carros.size() >= maxCars) {
+							ACLMessage reply = msg.createReply();
+							reply.setPerformative(ACLMessage.INFORM);
+							reply.setContent(Messages.buildHasSpaceMessage("FULL"));
+							send(reply);
+						}else{
+							ACLMessage reply = msg.createReply();
+							reply.setPerformative(ACLMessage.INFORM);
+							reply.setContent(Messages.buildHasSpaceMessage("FREE"));
+							send(reply);
+						}
+						break;
+					}
+					default: {
+						break;
+					}
 				}
 			} else {
 				block();

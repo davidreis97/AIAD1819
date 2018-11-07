@@ -103,4 +103,11 @@ public class Path {
 
 	}
 
+	public String getNextRoad() {
+		if (currentIndex + 1 < path.size()) {
+			return path.get(currentIndex+1);
+		}
+		return "NONE";
+	}
+
 }

@@ -1,5 +1,7 @@
 package src.resources;
 
+import java.util.Arrays;
+
 import jade.core.AID;
 import src.graph.Point;
 
@@ -16,9 +18,14 @@ public class Messages {
 		CAR_LOCATION,
 		REQUEST_INTERSECTION, 
 		REQUEST_ACCEPTED, 
-		
+		POLL_SPACE,
+		SPACE_INFO,
 	}
 	
+	public static String[] getMessageContent(String message) {
+		String result[] = message.split(SEPARATOR);
+		return Arrays.copyOfRange(result, 1, result.length);
+	}
 	
 	public static MessageType getMessageType(String content) {
 	
@@ -28,9 +35,13 @@ public class Messages {
 			if(content.startsWith(types[i].toString()))
 				return types[i];
 		}
+		System.out.println("Unknown message type in " + content + " msg");
 		return null;
 	}
 	
+	public static String buildHasSpaceMessage(String status) {
+		return MessageType.SPACE_INFO.toString()+ SEPARATOR + status;
+	}
 	
 	public static String buildFrontCarMessage(AID frontCar) {
 		return MessageType.FRONT_CAR.toString()+ SEPARATOR + ((frontCar!=null)?frontCar.getLocalName():"");

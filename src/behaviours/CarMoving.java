@@ -95,10 +95,9 @@ public class CarMoving extends TickerBehaviour {
 	 * Sends the car request to enter an intersection
 	 */
 	public void requestIntersection() {
-
+		System.out.println("Requesting entry in road RoadAgent" + car.getPath().getNextRoad());
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-		msg.setContent("REQUEST_INTERSECTION");
-
+		msg.setContent("REQUEST_INTERSECTION;RoadAgent"+car.getPath().getNextRoad());
 		AID agent = car.getAID("IntersectionAgent" + car.getPath().currentIntersection.name);
 		msg.addReceiver(agent);
 		car.send(msg);
