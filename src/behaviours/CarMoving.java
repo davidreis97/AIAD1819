@@ -3,6 +3,10 @@ package src.behaviours;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
+import jade.domain.DFService;
+import jade.domain.FIPAException;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import src.agents.Car;
 import src.resources.Messages;
@@ -77,11 +81,20 @@ public class CarMoving extends TickerBehaviour {
 		}
 
 		if (!car.inIntersection() && p.inIntersection) {
-
-			car.removeCar("IntersectionAgent" + p.currentIntersection.name);
-			System.out.println("leaving intersection");
-			p.removeIntersection();
-
+			System.out.println("leaving intersection " + car.getName().split("@")[0]);
+			DFAgentDescription template = new DFAgentDescription();
+			ServiceDescription sd = new ServiceDescription();
+			sd.setType("intersection");
+			sd.setName("intersection"+p.currentIntersection.name);
+			template.addServices(sd);
+			try {
+				DFAgentDescription[] result = DFService.search(myAgent, template);
+				AID intersection = result[0].getName();
+				car.removeCar(intersection);
+				p.removeIntersection();
+			}catch(FIPAException fe) {
+				fe.printStackTrace();
+			}
 		}
 
 		if (car.isOutOfBounds()) {
@@ -98,9 +111,19 @@ public class CarMoving extends TickerBehaviour {
 		System.out.println("Requesting entry in road RoadAgent" + car.getPath().getNextRoad());
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		msg.setContent("REQUEST_INTERSECTION;RoadAgent"+car.getPath().getNextRoad());
-		AID agent = car.getAID("IntersectionAgent" + car.getPath().currentIntersection.name);
-		msg.addReceiver(agent);
-		car.send(msg);
+		DFAgentDescription template = new DFAgentDescription();
+		ServiceDescription sd = new ServiceDescription();
+		sd.setType("intersection");
+		sd.setName("intersection" + car.getPath().currentIntersection.name);
+		template.addServices(sd);
+		try {
+			DFAgentDescription[] result = DFService.search(myAgent, template);
+			AID intersection = result[0].getName();
+			msg.addReceiver(intersection);
+			car.send(msg);
+		}catch(FIPAException fe) {
+			fe.printStackTrace();
+		}
 	}
 
 	/*

@@ -69,7 +69,7 @@ public class Map extends JPanel {
 		intersection1.addOutRoad(r1);
 		intersection2.addInRoad(r1);
 
-		p1 = new Point(8, 2);
+		p1 = new Point(9, 2);
 		p2 = new Point(10, 2);
 		r1 = new Road("5", p1, p2, intersection2, null, Direction.LEFT);
 		roads.put("5", r1);
@@ -241,8 +241,12 @@ public class Map extends JPanel {
 
 			Rectangle2D rect = new Rectangle2D.Double(c.location.x * unit, c.location.y * unit, c.size.x * unit,
 					c.size.y * unit);
+			
 			g2.setPaint(Color.PINK);
 			g2.fill(rect);
+			
+			g2.setPaint(Color.BLACK);
+			g.drawString(c.getName().split("@")[0],(int) (c.location.x + 0.5) * unit,(int) (c.location.y + 1) * unit);
 
 			if (!c.isAlive()) {
 				cars.remove(c);

@@ -8,6 +8,7 @@ import java.util.Random;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.TickerBehaviour;
 import jade.core.behaviours.WakerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.wrapper.AgentController;
@@ -29,17 +30,20 @@ public class CarSpawner extends Agent {
 	private Map mapa;
 	public static int index=0;
 	
-	private Queue<ArrayList<String>> starters;
+	private ArrayList<ArrayList<String>> starters;
+	private int latestAgentChecked;
 	
 	public CarSpawner(ContainerController container, Map mapa) {
 		this.container = container;
 		this.mapa = mapa;
-		this.starters = new LinkedList<ArrayList<String>>(); 
+		this.starters = new ArrayList<ArrayList<String>>(); 
 	}
 	
 	public void checkIfInitialRoadHasSpace() {
 		if(starters.size() > 0) {
-			String roadAgentName = "RoadAgent" + starters.peek().get(0);			
+			//Obtem um road agent ao calhas de entre aqueles que estao na lista para entrar
+			latestAgentChecked = (int) (Math.random()*starters.size());
+			String roadAgentName = "RoadAgent" + starters.get(latestAgentChecked).get(0);			
 			AID roadAgent = getAID(roadAgentName);
 			ACLMessage sendMsg = new ACLMessage(ACLMessage.INFORM);
 			sendMsg.setContent(Messages.MessageType.POLL_SPACE.toString());
@@ -51,9 +55,7 @@ public class CarSpawner extends Agent {
 	public class ReceiveMessageBehaviour extends CyclicBehaviour{
 
 		@Override
-		public void action() {			
-			checkIfInitialRoadHasSpace();
-			
+		public void action() {						
 			ACLMessage msg = receive();
 			
 			if(msg != null) {
@@ -64,7 +66,7 @@ public class CarSpawner extends Agent {
 						String status = Messages.getMessageContent(msg.getContent())[0];
 						if(status.equals("FREE")){
 							if(starters.size() > 0) {
-								ArrayList<String> path = starters.poll();
+								ArrayList<String> path = starters.get(latestAgentChecked);
 								
 								Car newCar = new Car(path);
 								mapa.addCar(newCar);
@@ -93,6 +95,15 @@ public class CarSpawner extends Agent {
 		Random rnd = new Random();
 		
 		addBehaviour(new ReceiveMessageBehaviour());
+		
+		addBehaviour(new TickerBehaviour(this,400) {
+
+			@Override
+			protected void onTick() {
+				checkIfInitialRoadHasSpace();
+			}
+			
+		});
 		
 		addBehaviour(new WakerBehaviour(this,0) {
 			protected void handleElapsedTimeout() {

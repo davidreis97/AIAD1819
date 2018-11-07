@@ -6,6 +6,7 @@ import jade.core.Agent;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
@@ -34,7 +35,7 @@ public class JADELauncher {
 		
 		for(int i=1; i<=Map.intersections.size(); i++) {
 			try {
-				ac1 = mainContainer.acceptNewAgent("IntersectionAgent"+i, new IntersectionAgent());
+				ac1 = mainContainer.acceptNewAgent("IntersectionAgent"+i, new IntersectionAgent(i));
 				ac1.start();
 			} catch (StaleProxyException e) {
 				e.printStackTrace();

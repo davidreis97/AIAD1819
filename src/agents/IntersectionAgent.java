@@ -8,6 +8,11 @@ import java.util.Queue;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.TickerBehaviour;
+import jade.domain.DFService;
+import jade.domain.FIPAException;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import src.resources.Messages.MessageType;
 import src.resources.Messages;
@@ -18,23 +23,46 @@ import src.resources.Messages;
 public class IntersectionAgent extends Agent {
 
 	public enum SelectionAlgorithm {
-		FIRST_COME_FIRST_SERVED, COLLISION_DETECTION
+		FIRST_COME_FIRST_SERVED, COLLISION_DETECTION, RANDOM_NEXT
 	}
 	
-	protected static final SelectionAlgorithm ALGORITHM = SelectionAlgorithm.FIRST_COME_FIRST_SERVED; 
-	protected Queue<SimpleEntry<AID,String>> waitingCars;
+	protected static final SelectionAlgorithm ALGORITHM = SelectionAlgorithm.RANDOM_NEXT; 
+	protected LinkedList<SimpleEntry<AID,String>> waitingCars;
 	protected boolean intersectionOccupied = false;
 	protected boolean nextRoadOccupied = false;
 	protected AID intersectionCar = null;
+	
+	private int index;
 
  
+	public IntersectionAgent(int index) {
+		super();
+		
+		this.index = index;
+	}
+
 	public void setup() {
- 
+		
+		DFAgentDescription dfd = new DFAgentDescription();
+		dfd.setName(getAID());
+		ServiceDescription sd = new ServiceDescription();
+		sd.setType("intersection");
+		sd.setName("intersection"+index);
+		dfd.addServices(sd);
+		
+		try {
+			DFService.register(this, dfd);
+		}catch(FIPAException fe) {
+			fe.printStackTrace();
+		}
+		
 		this.waitingCars = new LinkedList<SimpleEntry<AID,String>>();
 		
 		if(ALGORITHM == SelectionAlgorithm.FIRST_COME_FIRST_SERVED) {
 			addBehaviour(new FirstComeFirstServedBehaviour());
-		}		
+		}else if(ALGORITHM == SelectionAlgorithm.RANDOM_NEXT) {
+			addBehaviour(new RandomNextBehaviour(this,100));
+		}
 	}
 
 	class FirstComeFirstServedBehaviour extends CyclicBehaviour {
@@ -62,7 +90,7 @@ public class IntersectionAgent extends Agent {
 						String status = Messages.getMessageContent(msg.getContent())[0];
 						if (status.equals("FREE")) {
 							nextRoadOccupied = false;
-							checkCarsInQueue();
+							checkCarsInQueue(msg.getSender().getName().split("@")[0]);
 						}else if(status.equals("FULL")) {
 							nextRoadOccupied = true;
 						}
@@ -73,21 +101,80 @@ public class IntersectionAgent extends Agent {
 						break;
 					}
 				}
-			} else {
-				
 			}
 		}
 	}
 	
-	private void checkCarsInQueue() {
+	class RandomNextBehaviour extends TickerBehaviour {
+
+		public RandomNextBehaviour(Agent a, long period) {
+			super(a, period);
+		}
+		
+		@Override
+		public void onTick() {			
+						
+			ACLMessage msg = receive();
+			
+			checkNextRandomRoadOccupied();
+																	
+			if (msg != null) {
+				
+				MessageType type = Messages.getMessageType(msg.getContent());
+				switch(type){
+					
+					case REQUEST_INTERSECTION:{
+						handleSubscribe(msg);
+						break;
+					}
+					case UNSUBSCRIBE:{
+						handleUnsubscribe(msg);
+						break;
+					}
+					case SPACE_INFO:{
+						String status = Messages.getMessageContent(msg.getContent())[0];
+						if (status.equals("FREE")) {
+							nextRoadOccupied = false;
+							checkCarsInQueue(msg.getSender().getName().split("@")[0]);
+						}else if(status.equals("FULL")) {
+							nextRoadOccupied = true;
+						}
+						break;
+					}
+					default:{
+						System.out.println(msg.getContent());
+						break;
+					}
+				}
+			}
+		}
+	}
+	
+	private void checkCarsInQueue(String roadAgent) {
 		if(!intersectionOccupied && !nextRoadOccupied && waitingCars.size() > 0) {
-			acceptCar(waitingCars.poll().getKey());
+			for(SimpleEntry<AID,String> entry : waitingCars) {
+				if(entry.getValue().equals(roadAgent)) {
+					acceptCar(entry.getKey());
+					return;
+				}
+			}
 		}
 	}
 	
 	private void checkNextRoadOccupied() {
 		if(waitingCars.size() > 0) {
 			AID roadAgent = getAID(waitingCars.peek().getValue());
+			ACLMessage sendMsg = new ACLMessage(ACLMessage.INFORM);
+			sendMsg.setContent(Messages.MessageType.POLL_SPACE.toString());
+			sendMsg.addReceiver(roadAgent);
+			send(sendMsg);
+		}
+	}
+	
+	private void checkNextRandomRoadOccupied() {
+		if(waitingCars.size() > 0) {
+			int nextIndex = (int) (Math.random() * waitingCars.size());
+			AID roadAgent = getAID(waitingCars.get(nextIndex).getValue());
 			ACLMessage sendMsg = new ACLMessage(ACLMessage.INFORM);
 			sendMsg.setContent(Messages.MessageType.POLL_SPACE.toString());
 			sendMsg.addReceiver(roadAgent);
@@ -124,9 +211,11 @@ public class IntersectionAgent extends Agent {
 	private void handleUnsubscribe(ACLMessage msg) {
 		
 		if (msg.getSender().equals(intersectionCar)) {
-			System.out.println("Intersection cleared");
+			System.out.println("Car " + msg.getSender().getName().split("@")[0] + " left intersection");
 			intersectionOccupied = false;
-		}	
+		}else {
+			System.out.println("Received unsubscribe from unknown car");
+		}
 	}
 	
 	/*
@@ -134,6 +223,13 @@ public class IntersectionAgent extends Agent {
 	 */
 	public void acceptCar(AID car) {
 		
+		for(int i = 0; i < waitingCars.size(); i++) {
+			if(waitingCars.get(i).getKey().equals(car)) {
+				waitingCars.remove(i);
+				break;
+			}
+		}
+				
 		intersectionOccupied = true;
 		nextRoadOccupied = true; //Might not be true but we'll assume it is and check again for the next car
 

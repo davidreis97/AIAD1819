@@ -27,7 +27,11 @@ public class CarMessagesReceiver extends CyclicBehaviour{
 		if (msg != null) {
 
 			MessageType type = Messages.getMessageType(msg.getContent());
-
+			
+			if(type == null) {
+				return;
+			}
+			
 			switch(type){
 				
 				case FRONT_CAR:{
@@ -108,7 +112,9 @@ public class CarMessagesReceiver extends CyclicBehaviour{
 	
 	
 	public void handleIntersectionAccepted(ACLMessage msg) {
-		
+		car.backCar = null;
+		car.frontCar = null;
+		car.frontCar_position = null;
 		car.getPath().setInIntersection();
 				
 	}

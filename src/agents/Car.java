@@ -154,6 +154,17 @@ public class Car extends Agent {
 		 return getRectangle().intersects(new Rectangle(carLoc.x, carLoc.y, 1, 1));
 	}
 
+	/*
+	 * Sends the message to remove the agent from a list
+	 */
+	public void removeCar(AID intersection) {
+
+		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+		msg.setContent(MessageType.UNSUBSCRIBE.toString());
+		msg.addReceiver(intersection);
+		send(msg);
+
+	}
 	
 	/*
 	 * Sends the message to remove the agent from a list

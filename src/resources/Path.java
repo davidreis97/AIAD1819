@@ -62,6 +62,8 @@ public class Path {
 	 * Sets all the variables when entering an intersection
 	 */
 	public void setWaitingIntersection() {
+		
+		System.out.println("Set in intersection " + currentRoad.getIntersection());
 
 		waitingIntersection = true;
 
