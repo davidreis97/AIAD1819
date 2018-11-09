@@ -29,7 +29,7 @@ public class Path {
 
 	public Path(ArrayList<String> path) {
 		this.path = path;
-
+	
 		this.currentRoadName = path.get(currentIndex);
 		this.currentRoad = Map.roads.get(currentRoadName);
 		this.currentDirection = currentRoad.getDirection();
@@ -66,8 +66,10 @@ public class Path {
 		waitingIntersection = true;
 
 		currentIntersection = currentRoad.getIntersection();
+		
 		String nextRoad = path.get(currentIndex + 1);
 		nextSwitchPoint = currentIntersection.getExitPoint(currentRoad, nextRoad);
+	 
 	}
 
 	/*

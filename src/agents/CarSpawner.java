@@ -14,7 +14,7 @@ import src.graph.Map;
  */
 public class CarSpawner extends Agent {
 	
-	public static final int SPAWN_TIME = 100;	//s
+	public static final int SPAWN_TIME = 5;	//s
 	public static final int SPAWN_INTERVAL = 1;	//s
 	
 	private ContainerController container;
@@ -33,7 +33,7 @@ public class CarSpawner extends Agent {
 		addBehaviour(new WakerBehaviour(this,0) {
 			protected void handleElapsedTimeout() {
 				
-				int randomNum = rnd.nextInt(Map.paths.size()-1) + 1;
+				int randomNum = rnd.nextInt(Map.paths.size()) + 1;
 
 				ArrayList<String> path = Map.paths.get(""+randomNum);
 			 

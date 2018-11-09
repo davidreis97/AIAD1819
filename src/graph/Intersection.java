@@ -15,6 +15,14 @@ public class Intersection {
 	private Rectangle area;
 
 	private Point location;
+	
+	public Point getLocation() {
+		return location;
+	}
+	
+	public String toString() {
+		return ""+name+location;
+	}
 
 	public Intersection(String name, Point loc) {
 
@@ -43,7 +51,9 @@ public class Intersection {
 	}
 
 	public Road getOutRoad(String road) {
-
+		
+		System.out.println(outRoads);
+		
 		Road nextR = null;
 
 		for (Road r : outRoads) {
@@ -65,13 +75,13 @@ public class Intersection {
 			case RIGHT: {
 	
 				if (nextR.direction == Direction.RIGHT) {
-					exitPoint = nextR.startPoint;
+					exitPoint = new Point( nextR.startPoint.x, nextR.startPoint.y+0.5);
 	
 				} else if (nextR.direction == Direction.UP) {
-					exitPoint = new Point(this.location.x + 1, this.location.y);
+					exitPoint = new Point(this.location.x + 1, this.location.y+0.5);
 	
 				} else if (nextR.direction == Direction.DOWN) {
-					exitPoint = this.location;
+					exitPoint = new Point (this.location.x, this.location.y+0.5);
 				}
 	
 				break;
@@ -79,12 +89,11 @@ public class Intersection {
 			case LEFT: {
 	
 				if (nextR.direction == Direction.LEFT) {
-					exitPoint = nextR.endPoint;
-	
+					exitPoint = new Point(nextR.endPoint.x, nextR.endPoint.y+0.5);
 				} else if (nextR.direction == Direction.UP) {
-					exitPoint = this.location;
-				} else if (nextR.direction == Direction.RIGHT) {
-					exitPoint = new Point(this.location.x - 1, this.location.y);
+					exitPoint = new Point (this.location.x, this.location.y-0.5);
+				} else if (nextR.direction == Direction.DOWN) {
+					exitPoint = new Point(this.location.x - 1, this.location.y-0.5);
 				}
 	
 				break;
@@ -92,12 +101,13 @@ public class Intersection {
 			case UP: {
 	
 				if (nextR.direction == Direction.UP) {
-					exitPoint = nextR.endPoint;
+					exitPoint = new Point( nextR.endPoint.x -0.5, nextR.endPoint.y);
 	
 				} else if (nextR.direction == Direction.RIGHT) {
-					exitPoint = this.location;
+					exitPoint = new Point(this.location.x + 0.5, this.location.y);
+					
 				} else if (nextR.direction == Direction.LEFT) {
-					exitPoint = new Point(this.location.x, this.location.y - 1);
+					exitPoint = new Point(this.location.x+ 0.5, this.location.y - 1);
 				}
 	
 				break;
@@ -105,12 +115,12 @@ public class Intersection {
 			case DOWN: {
 	
 				if (nextR.direction == Direction.DOWN) {
-					exitPoint = nextR.startPoint;
+					exitPoint = new Point (nextR.startPoint.x+0.5, nextR.startPoint.y);
 	
 				} else if (nextR.direction == Direction.LEFT) {
-					exitPoint = this.location;
+					exitPoint = new Point(this.location.x -0.5, this.location.y);
 				} else if (nextR.direction == Direction.RIGHT) {
-					exitPoint = new Point(this.location.x, this.location.y + 1);
+					exitPoint = new Point(this.location.x-0.5, this.location.y + 1);
 				}
 				break;
 			}

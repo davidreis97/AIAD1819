@@ -1,8 +1,14 @@
 package src.main;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import javax.swing.SwingUtilities;
-import jade.core.Agent;
+import java.util.HashMap;
+
+ 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+ 
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
@@ -12,10 +18,15 @@ import jade.wrapper.StaleProxyException;
 import src.agents.CarSpawner;
 import src.agents.IntersectionAgent;
 import src.agents.RoadAgent;
+import src.graph.Intersection;
 import src.graph.Map;
+import src.graph.Reader;
+import src.graph.Road;
 
 public class JADELauncher {
 
+	private static String filename = "maps/teste3.xml";
+	
 	public static void main(String[] args) {
 
 		Runtime rt = Runtime.instance();
@@ -24,8 +35,25 @@ public class JADELauncher {
 		ContainerController mainContainer = rt.createMainContainer(p1);
 		
 		
+		Reader reader = null;
+        try {
+            reader = new Reader(filename);
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        }
+
+    	
+    	HashMap<String, Intersection> intersections = reader.getIntersections();
+    	HashMap<String, Road> roads = reader.getRoads(intersections);
+    	HashMap<String, ArrayList<String>> paths = reader.getPaths();
+    	int size = reader.getMapSize();
+    	
 		/* Map */ 
-		Map mapa = new Map();
+		Map mapa = new Map(intersections, roads, paths, size);
 		
 		
 		/* Intersection agents */

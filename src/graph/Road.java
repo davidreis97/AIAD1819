@@ -17,6 +17,10 @@ public class Road {
 
 	protected Direction direction;
 
+	public String toString() {
+		return name + ";"+startPoint+";"+endPoint+";"+startIntersection+";"+endIntersection+";"+direction;
+	}
+	
 	public Road(String name, Point start, Point end, Intersection i1, Intersection i2, Direction dir) {
 
 		this.name = name;
