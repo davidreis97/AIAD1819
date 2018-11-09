@@ -18,9 +18,12 @@ public class RoadAgent extends Agent {
 	
 	private int maxCars;
 
-	public void setup() {
-		maxCars = 2; //Valor +- decente para o tamanho das nossas ruas neste momento
-		
+	public RoadAgent(int maxCars) {
+		super();
+		this.maxCars = maxCars;
+	}
+
+	public void setup() {		
 		addBehaviour(new ListeningBehaviour());
 		carros = new ArrayList<AID>();
 	}
@@ -100,12 +103,14 @@ public class RoadAgent extends Agent {
 		// inform the back car that he no longer has a front car
 
 		if (carros.size() >= 2) {
+			try {
 
 			int index = carros.indexOf(msg.getSender());
 			AID backCar = carros.get(index + 1);
 
 			String message = Messages.buildFrontCarMessage(null);
 			sendMessage(message, backCar);
+			}catch(Exception e){}
 		}
 
 		// remove car

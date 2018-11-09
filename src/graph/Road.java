@@ -7,22 +7,26 @@ public class Road {
 		UP, DOWN, LEFT, RIGHT
 	}
 
-	protected String name;
+	public String name;
 
 	protected Point startPoint;
 	protected Point endPoint;
 
-	private Intersection startIntersection;
-	private Intersection endIntersection;
+	public Intersection startIntersection;
+	public Intersection endIntersection;
 
 	protected Direction direction;
 
+	public int maxCars;
+	
 	public Road(String name, Point start, Point end, Intersection i1, Intersection i2, Direction dir) {
 
 		this.name = name;
 
 		this.startPoint = start;
 		this.endPoint = end;
+		
+		this.maxCars = (int) startPoint.distance(endPoint);
 
 		this.startIntersection = i1;
 		this.endIntersection = i2;
@@ -51,7 +55,10 @@ public class Road {
 	}
 
 	public Point getInitialPoint() {
-		return startPoint;
+		if(direction != Direction.UP && direction != Direction.LEFT) {
+			return startPoint;
+		}
+		return endPoint;
 	}
 
 	public Direction getDirection() {
@@ -70,47 +77,6 @@ public class Road {
 		}
 		
 		return res;
-		
-		// check if the intersection exists
-		/*switch (direction) {
-
-			case RIGHT: {
-	
-				if (endIntersection == null)
-					return false;
-				break;
-			}
-			case LEFT: {
-				if (startIntersection == null)
-					return false;
-				break;
-			}
-			case UP: {
-				if (startIntersection == null)
-					return false;
-				break;
-			}
-			case DOWN: {
-				if (endIntersection == null)
-					return false;
-				break;
-			}
-		}
-
-		switch (direction) {
-
-			case RIGHT:
-			case DOWN:
-				
-				return endIntersection.inIntersection(r);
-	
-			case LEFT:
-			case UP:
-	
-				return startIntersection.inIntersection(r);
-		}
-		
-		return false;*/
 	}
 	
 	
@@ -123,6 +89,10 @@ public class Road {
 			return startIntersection;
 		}
 			
+	}
+
+	public Point getEndPoint() {
+		return endPoint;
 	}
 
 }

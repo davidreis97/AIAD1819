@@ -39,6 +39,10 @@ public class Point implements java.io.Serializable {
 	public Point symetric() {
 		return new Point(-this.x, -this.y);
 	}
+	
+	public double distance(Point anotherPoint) {
+		return Math.sqrt(Math.pow((x-anotherPoint.x), 2) + Math.pow((y-anotherPoint.y), 2));
+	}
 
  
 

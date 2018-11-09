@@ -17,10 +17,13 @@ import src.resources.Rectangle;
 public class CarMoving extends TickerBehaviour {
 
 	private Car car;
+	
+	private int ticksWaiting;
 
 	public CarMoving(Agent a, long period) {
 		super(a, period);
 
+		ticksWaiting = 0;
 		this.car = (Car) a;
 	}
 
@@ -67,15 +70,17 @@ public class CarMoving extends TickerBehaviour {
 		}
 
 		if (canMove) {
-
+			
 			car.location.add(car.velocity);
+		}else {
+			ticksWaiting++;
 		}
 
 		
 		if (p.inIntersection && p.nextSwitchPoint!=null && car.getRectangle().contains(p.nextSwitchPoint)) {
 
 			System.out.println("switching road");
-
+			car.backCar = null;
 			p.switchRoad(car);
 
 		}
@@ -98,7 +103,8 @@ public class CarMoving extends TickerBehaviour {
 		}
 
 		if (car.isOutOfBounds()) {
-			this.myAgent.doDelete();
+			System.out.println("CAR WAITED " + (double) (ticksWaiting * 50) / 1000.0 + " SECONDS");
+			this.myAgent.doDelete(); 
 			return;
 		}
 

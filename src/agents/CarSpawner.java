@@ -3,6 +3,7 @@ package src.agents;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Random;
 import jade.core.AID;
@@ -14,7 +15,10 @@ import jade.lang.acl.ACLMessage;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
+import src.graph.Intersection;
 import src.graph.Map;
+import src.graph.Road;
+import src.graph.Road.Direction;
 import src.resources.Messages;
 import src.resources.Messages.MessageType;
 
@@ -23,7 +27,7 @@ import src.resources.Messages.MessageType;
  */
 public class CarSpawner extends Agent {
 	
-	public static final int SPAWN_TIME = 2;	//s
+	public static final int GENERATE_RANDOM_TIME = 20;	//s
 	public static final int SPAWN_INTERVAL = 1;	//s
 	
 	private ContainerController container;
@@ -33,10 +37,21 @@ public class CarSpawner extends Agent {
 	private ArrayList<ArrayList<String>> starters;
 	private int latestAgentChecked;
 	
+	private ArrayList<String> initialPoints;
+	
 	public CarSpawner(ContainerController container, Map mapa) {
 		this.container = container;
 		this.mapa = mapa;
 		this.starters = new ArrayList<ArrayList<String>>(); 
+		this.initialPoints = new ArrayList<>();
+		
+		for (Entry<String, Road> entry : Map.roads.entrySet()) {
+		    Road road = entry.getValue();
+		    if ((road.startIntersection == null && (road.getDirection() == Direction.RIGHT || road.getDirection() == Direction.DOWN)) || 
+		    	(road.endIntersection == null && (road.getDirection() == Direction.UP || road.getDirection() == Direction.LEFT))) {
+		    	this.initialPoints.add(entry.getKey());
+		    }
+		}
 	}
 	
 	public void checkIfInitialRoadHasSpace() {
@@ -55,7 +70,14 @@ public class CarSpawner extends Agent {
 	public class ReceiveMessageBehaviour extends CyclicBehaviour{
 
 		@Override
-		public void action() {						
+		public void action() {			
+			if(starters.size() < 10) {
+				ArrayList<String> path = generateRandomPath();
+				
+				starters.add(path);
+			}
+			
+			
 			ACLMessage msg = receive();
 			
 			if(msg != null) {
@@ -96,7 +118,7 @@ public class CarSpawner extends Agent {
 		
 		addBehaviour(new ReceiveMessageBehaviour());
 		
-		addBehaviour(new TickerBehaviour(this,400) {
+		addBehaviour(new TickerBehaviour(this,1) {
 
 			@Override
 			protected void onTick() {
@@ -104,24 +126,22 @@ public class CarSpawner extends Agent {
 			}
 			
 		});
+	}
+	
+	public ArrayList<String> generateRandomPath(){
+		Road currentRoad = Map.roads.get(initialPoints.get((int) (Math.random() * initialPoints.size())));
+		Intersection nextIntersection = currentRoad.getIntersection();
 		
-		addBehaviour(new WakerBehaviour(this,0) {
-			protected void handleElapsedTimeout() {
-				if(starters.size() > 10) {
-					return;
-				}
-				
-				int randomNum = rnd.nextInt(Map.paths.size()-1) + 1;
-
-				ArrayList<String> path = Map.paths.get(""+randomNum);
-				
-				starters.add(path);
-				
-				System.out.println("Added car to queue");
-				
-				this.reset(SPAWN_TIME*1000 + (int)(Math.random() * SPAWN_INTERVAL * 1000));
-			}
-		});
+		ArrayList<String> path = new ArrayList<>();
+		path.add(currentRoad.name);
+		
+		while (nextIntersection != null) {
+			currentRoad = nextIntersection.getRandomOutRoad(currentRoad);
+			path.add(currentRoad.name);
+			nextIntersection = currentRoad.getIntersection();
+		}
+		
+		return path;
 	}
 
 }

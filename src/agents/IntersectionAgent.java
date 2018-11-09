@@ -26,6 +26,7 @@ public class IntersectionAgent extends Agent {
 		FIRST_COME_FIRST_SERVED, COLLISION_DETECTION, RANDOM_NEXT
 	}
 	
+	
 	protected static final SelectionAlgorithm ALGORITHM = SelectionAlgorithm.RANDOM_NEXT; 
 	protected LinkedList<SimpleEntry<AID,String>> waitingCars;
 	protected boolean intersectionOccupied = false;
@@ -59,15 +60,19 @@ public class IntersectionAgent extends Agent {
 		this.waitingCars = new LinkedList<SimpleEntry<AID,String>>();
 		
 		if(ALGORITHM == SelectionAlgorithm.FIRST_COME_FIRST_SERVED) {
-			addBehaviour(new FirstComeFirstServedBehaviour());
+			addBehaviour(new FirstComeFirstServedBehaviour(this,100));
 		}else if(ALGORITHM == SelectionAlgorithm.RANDOM_NEXT) {
-			addBehaviour(new RandomNextBehaviour(this,100));
+			addBehaviour(new RandomNextBehaviour(this,10));
 		}
 	}
 
-	class FirstComeFirstServedBehaviour extends CyclicBehaviour {
+	class FirstComeFirstServedBehaviour extends TickerBehaviour {
 
-		public void action() {			
+		public FirstComeFirstServedBehaviour(Agent a, long period) {
+			super(a, period);
+		}
+
+		public void onTick() {			
 						
 			ACLMessage msg = receive();
 			

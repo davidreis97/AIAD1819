@@ -29,6 +29,10 @@ public class Intersection {
 		this.area = new Rectangle(loc.x - 1, loc.y - 1, 2, 2);
 
 	}
+	
+	public Point getLocation() {
+		return location;
+	}
 
 	public void addInRoad(Road r) {
 		this.inRoads.add(r);
@@ -55,69 +59,81 @@ public class Intersection {
 
 		return nextR;
 	}
-
-	public Point getExitPoint(Road currentRoad, String nextRoad) {
-
-		Road nextR = getOutRoad(nextRoad);
+	
+	public Road getRandomOutRoad(Road currentRoad) {
+		Road outRoad = null;
+		Point exitPoint = null;
+		while(exitPoint == null) {
+			outRoad = outRoads.get((int)(Math.random() * outRoads.size()));
+			exitPoint = getExitPoint(currentRoad,outRoad);
+		}
+		return outRoad;
+	}
+	
+	public Point getExitPoint(Road currentRoad, Road nextRoad) {
 		Point exitPoint = null;
 
 		switch (currentRoad.direction) {
 			case RIGHT: {
 	
-				if (nextR.direction == Direction.RIGHT) {
-					exitPoint = nextR.startPoint;
+				if (nextRoad.direction == Direction.RIGHT) {
+					exitPoint = new Point( nextRoad.startPoint.x, nextRoad.startPoint.y+0.5);
 	
-				} else if (nextR.direction == Direction.UP) {
-					exitPoint = new Point(this.location.x + 1, this.location.y);
+				} else if (nextRoad.direction == Direction.UP) {
+					exitPoint = new Point(this.location.x + 1+.2, this.location.y+0.5);
 	
-				} else if (nextR.direction == Direction.DOWN) {
-					exitPoint = this.location;
+				} else if (nextRoad.direction == Direction.DOWN) {
+					exitPoint = new Point (this.location.x+.2, this.location.y+0.5);	//!!
 				}
 	
 				break;
 			}
 			case LEFT: {
 	
-				if (nextR.direction == Direction.LEFT) {
-					exitPoint = nextR.endPoint;
-	
-				} else if (nextR.direction == Direction.UP) {
-					exitPoint = this.location;
-				} else if (nextR.direction == Direction.RIGHT) {
-					exitPoint = new Point(this.location.x - 1, this.location.y);
+				if (nextRoad.direction == Direction.LEFT) {
+					exitPoint = new Point(nextRoad.endPoint.x, nextRoad.endPoint.y+0.5);
+				} else if (nextRoad.direction == Direction.UP) {
+					exitPoint = new Point (this.location.x, this.location.y-0.5);
+				} else if (nextRoad.direction == Direction.DOWN) {
+					exitPoint = new Point(this.location.x - 1, this.location.y-0.5);
 				}
 	
 				break;
 			}
 			case UP: {
 	
-				if (nextR.direction == Direction.UP) {
-					exitPoint = nextR.endPoint;
+				if (nextRoad.direction == Direction.UP) {
+					exitPoint = new Point( nextRoad.endPoint.x +0.5, nextRoad.endPoint.y);
 	
-				} else if (nextR.direction == Direction.RIGHT) {
-					exitPoint = this.location;
-				} else if (nextR.direction == Direction.LEFT) {
-					exitPoint = new Point(this.location.x, this.location.y - 1);
+				} else if (nextRoad.direction == Direction.RIGHT) {
+					exitPoint = new Point(this.location.x + 0.5, this.location.y);
+					
+				} else if (nextRoad.direction == Direction.LEFT) {
+					exitPoint = new Point(this.location.x+ 0.5, this.location.y - 1);
 				}
 	
 				break;
 			}
 			case DOWN: {
 	
-				if (nextR.direction == Direction.DOWN) {
-					exitPoint = nextR.startPoint;
+				if (nextRoad.direction == Direction.DOWN) {
+					exitPoint = new Point (nextRoad.startPoint.x+0.5, nextRoad.startPoint.y);
 	
-				} else if (nextR.direction == Direction.LEFT) {
-					exitPoint = this.location;
-				} else if (nextR.direction == Direction.RIGHT) {
-					exitPoint = new Point(this.location.x, this.location.y + 1);
+				} else if (nextRoad.direction == Direction.LEFT) {
+					exitPoint = new Point(this.location.x -0.5, this.location.y + 0.2);
+				} else if (nextRoad.direction == Direction.RIGHT) {
+					exitPoint = new Point(this.location.x-0.5, this.location.y + 1+0.2);
 				}
 				break;
 			}
 		}
 
 		return exitPoint;
+	}
 
+	public Point getExitPoint(Road currentRoad, String nextRoad) {
+		Road nextR = getOutRoad(nextRoad);
+		return getExitPoint(currentRoad,nextR);
 	}
 
 }

@@ -1,22 +1,33 @@
 package src.main;
 
+import java.awt.Point;
+import java.io.IOException;
 import java.util.ArrayList;
-import javax.swing.SwingUtilities;
-import jade.core.Agent;
+import java.util.HashMap;
+
+ 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+ 
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 import src.agents.CarSpawner;
 import src.agents.IntersectionAgent;
 import src.agents.RoadAgent;
+import src.graph.Intersection;
 import src.graph.Map;
+import src.graph.Reader;
+import src.graph.Road;
 
 public class JADELauncher {
 
+	private static String filename = "maps/teste2.xml";
+	
 	public static void main(String[] args) {
 
 		Runtime rt = Runtime.instance();
@@ -25,8 +36,24 @@ public class JADELauncher {
 		ContainerController mainContainer = rt.createMainContainer(p1);
 		
 		
+		Reader reader = null;
+        try {
+            reader = new Reader(filename);
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        }
+
+    	
+    	HashMap<String, Intersection> intersections = reader.getIntersections();
+    	HashMap<String, Road> roads = reader.getRoads(intersections);
+    	int size = reader.getMapSize();
+    	
 		/* Map */ 
-		Map mapa = new Map();
+		Map mapa = new Map(intersections, roads, size);
 		
 		
 		/* Intersection agents */
@@ -59,7 +86,7 @@ public class JADELauncher {
 		for(int i=1; i<=Map.roads.size(); i++) {
 			
 			try {
-				ac4 = mainContainer.acceptNewAgent("RoadAgent"+i, new RoadAgent());
+				ac4 = mainContainer.acceptNewAgent("RoadAgent"+i, new RoadAgent(roads.get(""+i).maxCars));
 
 				ac4.start();
 			} catch (StaleProxyException e) {
@@ -87,7 +114,7 @@ public class JADELauncher {
 
 				while (true) {
 					try {
-						Thread.sleep(100);
+						Thread.sleep(50);
 					} catch (InterruptedException e) {
 					}
 					mapa.repaint();

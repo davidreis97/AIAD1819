@@ -52,7 +52,7 @@ public class Car extends Agent {
 		addBehaviour(new CarMessagesReceiver(this));
 
 		// Behavior that represents the car moving
-		addBehaviour(new CarMoving(this, 100));
+		addBehaviour(new CarMoving(this, 50));
 
 	}
 	
@@ -72,13 +72,12 @@ public class Car extends Agent {
 	 * Checks if the car is out of bounds
 	 */
 	public boolean isOutOfBounds() {
-		if (location.x > 10 || location.x < 0 || location.y > 10 || location.y < 0) {
+		if (location.x > Map.width || location.x < 0 || location.y > Map.width || location.y < 0) {
 			return true;
 		} else {
 			return false;
 		}
 	}
-	
 
 	/*
 	 * Returns the path of the car
