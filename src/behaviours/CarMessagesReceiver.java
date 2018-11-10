@@ -73,10 +73,10 @@ public class CarMessagesReceiver extends CyclicBehaviour{
 			
 			String frontCar = parts[1];
 			AID agentID = car.getAID(frontCar);
-			car.frontCar = agentID;
+			//car.frontCar = agentID;
  
 		} else {
-			car.frontCar = null ;
+			car.frontCar_position = null ;
 		}
 	}
 	

@@ -26,7 +26,7 @@ public class Road {
 		this.startPoint = start;
 		this.endPoint = end;
 		
-		this.maxCars = (int) startPoint.distance(endPoint);
+		this.maxCars = (int) startPoint.distance(endPoint) -1;
 
 		this.startIntersection = i1;
 		this.endIntersection = i2;

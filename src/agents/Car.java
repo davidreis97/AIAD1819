@@ -16,7 +16,7 @@ import src.resources.Messages.MessageType;
 public class Car extends Agent {
 
 	//cenas
-	public AID frontCar, backCar;
+	public AID backCar;
 	public Point frontCar_position;
 	
 	public Point size; 		// size
@@ -27,7 +27,6 @@ public class Car extends Agent {
 	
 	public Car(ArrayList<String> p) {
 
-		this.frontCar = null;
 		this.backCar = null;
 		this.frontCar_position = null;
 		

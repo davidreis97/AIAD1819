@@ -1,13 +1,10 @@
 package src.agents;
 
-import java.io.IOException;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map.Entry;
-import java.util.Queue;
 import jade.core.AID;
 import jade.core.Agent;
-import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -15,6 +12,9 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import src.resources.Messages.MessageType;
+import src.resources.Rectangle;
+import src.graph.Map;
+import src.graph.Road;
 import src.resources.Messages;
 
 /*
@@ -26,12 +26,20 @@ public class IntersectionAgent extends Agent {
 		FIRST_COME_FIRST_SERVED, COLLISION_DETECTION, RANDOM_NEXT
 	}
 	
+	protected static final SelectionAlgorithm ALGORITHM = SelectionAlgorithm.COLLISION_DETECTION; 	
 	
-	protected static final SelectionAlgorithm ALGORITHM = SelectionAlgorithm.RANDOM_NEXT; 
 	protected LinkedList<SimpleEntry<AID,String>> waitingCars;
-	protected boolean intersectionOccupied = false;
+
 	protected boolean nextRoadOccupied = false;
+	
+	//RANDOM_NEXT and FIRST_COME_FIRST_SERVED algorithms variables
+	protected boolean intersectionOccupied = false;
 	protected AID intersectionCar = null;
+	
+	//COLLISION_DETECTION algorithm variables
+	protected HashMap<AID,Rectangle> waitingCarsArea;
+	protected HashMap<AID,Rectangle> intersectionRectangles;
+	
 	
 	private int index;
 
@@ -43,7 +51,7 @@ public class IntersectionAgent extends Agent {
 	}
 
 	public void setup() {
-		
+
 		DFAgentDescription dfd = new DFAgentDescription();
 		dfd.setName(getAID());
 		ServiceDescription sd = new ServiceDescription();
@@ -60,11 +68,132 @@ public class IntersectionAgent extends Agent {
 		this.waitingCars = new LinkedList<SimpleEntry<AID,String>>();
 		
 		if(ALGORITHM == SelectionAlgorithm.FIRST_COME_FIRST_SERVED) {
-			addBehaviour(new FirstComeFirstServedBehaviour(this,100));
+			//addBehaviour(new FirstComeFirstServedBehaviour(this,100));
 		}else if(ALGORITHM == SelectionAlgorithm.RANDOM_NEXT) {
-			addBehaviour(new RandomNextBehaviour(this,10));
+			//addBehaviour(new RandomNextBehaviour(this,10));
+		
+		}else if(ALGORITHM == SelectionAlgorithm.COLLISION_DETECTION) {
+			
+
+			this.waitingCarsArea = new HashMap<AID,Rectangle>();
+			this.intersectionRectangles = new HashMap<AID,Rectangle>();
+			
+			
+			addBehaviour(new CollisionDetectionBehaviour(this,10));
 		}
 	}
+	
+		
+	class CollisionDetectionBehaviour extends TickerBehaviour {
+
+		public CollisionDetectionBehaviour(Agent a, long period) {
+			super(a, period);
+		}
+
+		public void onTick() {			
+						
+			ACLMessage msg = receive();
+			
+			checkNextRoadOccupied();
+								
+			if (msg != null) {
+				
+				MessageType type = Messages.getMessageType(msg.getContent());
+				switch(type){
+					
+					case REQUEST_INTERSECTION:{
+						handleSubscribe2(msg);
+						break;
+					}
+					case UNSUBSCRIBE:{
+						
+						//remove area do carro 
+						intersectionRectangles.remove(msg.getSender());
+						
+						break;
+					}
+					case SPACE_INFO:{
+						String status = Messages.getMessageContent(msg.getContent())[0];
+						if (status.equals("FREE")) {
+							nextRoadOccupied = false;
+							checkCarsInQueue2(msg.getSender().getName().split("@")[0]);
+						}else if(status.equals("FULL")) {
+							nextRoadOccupied = true;
+						}
+						break;
+					}
+					default:{
+						break;
+					}
+				}
+			}
+		}
+		
+	}
+	
+	
+	private void checkCarsInQueue2(String roadAgent) {
+		if( !nextRoadOccupied && waitingCars.size() > 0) {
+			for(SimpleEntry<AID,String> entry : waitingCars) {
+				if(entry.getValue().equals(roadAgent)) {
+					
+					boolean accept = true;
+					
+					//verifica colisao com as areas dos carros que estao na intersecao 
+					for (AID aiad : intersectionRectangles.keySet()) {
+					    
+						Rectangle rect = intersectionRectangles.get(aiad);
+					    					     
+					    if(waitingCarsArea.get(entry.getKey()).intersects(rect)) {
+					    	accept=false;
+					    }
+					}
+				
+					
+					if(accept==true) {
+						
+						acceptCar(entry.getKey());
+						
+						intersectionRectangles.put(entry.getKey(),waitingCarsArea.get(entry.getKey()));
+						 
+						waitingCarsArea.remove(entry.getKey());
+						
+					}
+					
+					return;	//NOTA: so esta a aceitar 1, pq se eu tiro isto, da concurrentModificationException :'(
+				}
+			}
+		}
+	}
+
+	
+	private void handleSubscribe2(ACLMessage msg) {
+		
+		if ( !inWaitingCars(msg.getSender())) {
+			
+			String roadAgentName = msg.getContent().split(Messages.SEPARATOR)[1];
+			
+			//add car to waiting list
+			waitingCars.add(new SimpleEntry<AID,String>(msg.getSender(),roadAgentName));
+			
+			String currentRoad= msg.getContent().split(Messages.SEPARATOR)[2];
+			String nextRoad= msg.getContent().split(Messages.SEPARATOR)[3];
+						
+			Road r1 = Map.roads.get(currentRoad);
+			
+			Rectangle rec = r1.getIntersection().getAreaOccupied(currentRoad, nextRoad);
+				
+			//add car area to waiting list; (esta area representa o espaco que o carro vai ocupar 
+			//na intersecao)
+			waitingCarsArea.put(msg.getSender(),rec);
+		 	
+		}			
+	}
+	
+	
+	// ---
+	
+	
 
 	class FirstComeFirstServedBehaviour extends TickerBehaviour {
 
@@ -235,10 +364,13 @@ public class IntersectionAgent extends Agent {
 			}
 		}
 				
-		intersectionOccupied = true;
-		nextRoadOccupied = true; //Might not be true but we'll assume it is and check again for the next car
+		if(ALGORITHM != SelectionAlgorithm.COLLISION_DETECTION) {
+			intersectionOccupied = true;
+			nextRoadOccupied = true; //Might not be true but we'll assume it is and check again for the next car
 
-		intersectionCar = car;
+			intersectionCar = car;
+		}
+		
 		
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		msg.setContent(MessageType.REQUEST_ACCEPTED.toString());

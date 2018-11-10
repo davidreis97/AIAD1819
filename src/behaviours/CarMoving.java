@@ -59,7 +59,7 @@ public class CarMoving extends TickerBehaviour {
 
 			Point frontCarLocation = car.frontCar_position;
 
-			if (car.frontCar != null && frontCarLocation != null) {
+			if ( frontCarLocation != null) {
 
 				canMove = !car.collisionRisk(frontCarLocation);
 
@@ -114,9 +114,14 @@ public class CarMoving extends TickerBehaviour {
 	 * Sends the car request to enter an intersection
 	 */
 	public void requestIntersection() {
+		
+		
 		System.out.println("Requesting entry in road RoadAgent" + car.getPath().getNextRoad());
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-		msg.setContent("REQUEST_INTERSECTION;RoadAgent"+car.getPath().getNextRoad());
+		
+		msg.setContent("REQUEST_INTERSECTION;RoadAgent"+car.getPath().getNextRoad()+";"+
+				car.getPath().getCurrentRoadName()+";"+car.getPath().getNextRoad());
+		
 		DFAgentDescription template = new DFAgentDescription();
 		ServiceDescription sd = new ServiceDescription();
 		sd.setType("intersection");
@@ -129,7 +134,7 @@ public class CarMoving extends TickerBehaviour {
 			car.send(msg);
 		}catch(FIPAException fe) {
 			fe.printStackTrace();
-		}
+		} 
 	}
 
 	/*
