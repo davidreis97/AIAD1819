@@ -88,7 +88,7 @@ public class Road {
 		} else {
 			return startIntersection;
 		}
-			
+			 
 	}
 
 	public Point getEndPoint() {
