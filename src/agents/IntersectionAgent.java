@@ -34,7 +34,7 @@ public class IntersectionAgent extends Agent {
 	}
 
 	// Chosen algorithm
-	protected static final SelectionAlgorithm ALGORITHM = SelectionAlgorithm.RANDOM_NEXT;
+	protected static final SelectionAlgorithm ALGORITHM = SelectionAlgorithm.COLLISION_DETECTION;
 
 	// Cars waiting in the intersection
 	protected LinkedList<SimpleEntry<AID, String>> waitingCars;

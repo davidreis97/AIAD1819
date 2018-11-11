@@ -18,11 +18,11 @@ import src.resources.Messages.*;
  */
 public class RoadAgent extends Agent {
 
-	ArrayList<AID> carros;
-	Queue<AID> intersecoes;
-	
-	private int maxCars;
- 	private int waitingForCars;
+	ArrayList<AID> carros;			//Cars in the road
+	Queue<AID> intersecoes;			//Intersections waiting for space
+		
+	private int maxCars;			//Max cars in the road
+ 	private int waitingForCars;		//Cars that are allocated to enter the road
 
 	public RoadAgent(int maxCars) {
 		super();
@@ -32,14 +32,17 @@ public class RoadAgent extends Agent {
 
 	public void setup() {		
 	
-		
+		//Behaviour that represents the road agent receiving the messages
 		addBehaviour(new ListeningBehaviour());
-		
 		
 		carros = new ArrayList<AID>();
 		intersecoes = new LinkedList<AID>();
 	}
 	
+	
+	/*
+	 * Behaviour that receives the messages
+	 */
 	class ListeningBehaviour extends CyclicBehaviour {
 
 		public void action() {
@@ -50,7 +53,8 @@ public class RoadAgent extends Agent {
 
 				MessageType type = Messages.getMessageType(msg.getContent());
 				switch (type) {
-					case SUBSCRIBE: {
+					
+				case SUBSCRIBE: {
 						handleSubscribe(msg);
 						break;
 					}
@@ -59,6 +63,7 @@ public class RoadAgent extends Agent {
 						break;
 					}
 					case POLL_SPACE:{
+						
 						if(! intersecoes.contains(msg.getSender())) {
 							intersecoes.add(msg.getSender());
 						}
@@ -73,6 +78,7 @@ public class RoadAgent extends Agent {
 					}
 				}
 				
+				//check if the road has space to ohter cars
 				checkEmptySpace();
 				
 			} else {
@@ -82,22 +88,25 @@ public class RoadAgent extends Agent {
 
 		}
 	}
-
-	 
  
+	/*
+	 * If the road has space, send that information to the intersections waiting
+	 */
 	public void checkEmptySpace() {
 		
 		if(carros.size() + waitingForCars < maxCars) {
 			AID inter = intersecoes.poll();
-			ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-			msg.addReceiver(inter);
-			msg.setContent(Messages.buildHasSpaceMessage("FREE"));
-			send(msg);
 			
-	 
+			String content = Messages.buildHasSpaceMessage("FREE");
+			sendMessage(content, inter);
+ 
 		}
 	}
 
+	/*
+	 * Adds a new car to the cars list. Informs the car if he has another car in front of him, and the other car
+	 * that he has a car behind him.
+	 */
 	public void handleSubscribe(ACLMessage msg) {
 
 		if (waitingForCars > 0) waitingForCars--;
@@ -106,6 +115,7 @@ public class RoadAgent extends Agent {
 		if (!carros.contains(msg.getSender()))
 			carros.add(msg.getSender());
 
+		
 		// check if the car has a car in front of him
 
 		int index = carros.indexOf(msg.getSender());
@@ -128,6 +138,9 @@ public class RoadAgent extends Agent {
 		}
 	}
 
+	/*
+	 * Removes the car from the cars list. Also informs the car in from of him that he no longer has a back car.
+	 */
 	public void handleUnsubscribe(ACLMessage msg) {
 
 		// inform the back car that he no longer has a front car
@@ -145,11 +158,12 @@ public class RoadAgent extends Agent {
 
 		// remove car
 		carros.remove(msg.getSender());
-		
-		
 
 	}
 
+	/*
+	 * Sends an ACL message
+	 */
 	public void sendMessage(String message, AID car) {
 		
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);

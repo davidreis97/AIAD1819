@@ -15,9 +15,8 @@ import src.resources.Messages.MessageType;
  */
 public class Car extends Agent {
 
-	//cenas
-	public AID backCar;
-	public Point frontCar_position;
+	public AID backCar;					//Back car
+	public Point frontCar_position;		//Front car position
 	
 	public Point size; 		// size
 	public Point location;  // location
@@ -31,7 +30,6 @@ public class Car extends Agent {
 		this.frontCar_position = null;
 		
 		this.size = new Point(1, 1); 
-
 		this.path = new Path(p);
 		
 		Road r = this.path.getCurrentRoad();
@@ -43,7 +41,7 @@ public class Car extends Agent {
 	}
 
 	public void setup() {
-		System.out.println( "; " +this.getLocalName() );
+		System.out.println( ";id: " +this.getLocalName() );
 
 		// Subscribe initial road
 		subscribeRoad(path.getCurrentRoadName());		
@@ -54,7 +52,6 @@ public class Car extends Agent {
 		// Behavior that represents the car moving
 		addBehaviour(new CarMoving(this, 50));
 		
-
 	}
 	
 	/*
@@ -163,7 +160,6 @@ public class Car extends Agent {
 		msg.setContent(MessageType.UNSUBSCRIBE.toString());
 		msg.addReceiver(intersection);
 		send(msg);
-
 	}
 	
 	/*
@@ -176,7 +172,6 @@ public class Car extends Agent {
 		AID dest = this.getAID(agent);
 		msg.addReceiver(dest);
 		send(msg);
-
 	}
 
 	/*
@@ -185,7 +180,6 @@ public class Car extends Agent {
 	public void takeDown() {
 
 		removeCar("RoadAgent" + this.path.getCurrentRoadName());
-
 		System.out.println("Car is done");
 	}
 
