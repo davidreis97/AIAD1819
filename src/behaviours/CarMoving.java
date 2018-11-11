@@ -14,12 +14,18 @@ import src.resources.Path;
 import src.graph.Point;
 import src.resources.Rectangle;
 
+/*
+ * Behaviour that represents the car moving
+ */
 public class CarMoving extends TickerBehaviour {
 
 	private Car car;
 	
 	private int ticksWaiting;
 
+	/*
+	 * Constructor
+	 */
 	public CarMoving(Agent a, long period) {
 		super(a, period);
 
@@ -30,7 +36,7 @@ public class CarMoving extends TickerBehaviour {
 	@Override
 	protected void onTick() {
 
-		// send my position to the back car
+		// send the car position to the back car
 		if (car.backCar != null) {
 			sendPosition(car.backCar);
 		}
@@ -42,7 +48,7 @@ public class CarMoving extends TickerBehaviour {
 		if (car.inIntersection()) {
 
 			if (!p.inIntersection && !p.waitingIntersection) { // send the request
-				//System.out.println("new intersection");
+				 
 				p.setWaitingIntersection();
 
 				requestIntersection();
@@ -72,21 +78,22 @@ public class CarMoving extends TickerBehaviour {
 		if (canMove) {
 			
 			car.location.add(car.velocity);
+		
 		}else {
 			ticksWaiting++;
 		}
 
 		
+		//switch road
 		if (p.inIntersection && p.nextSwitchPoint!=null && car.getRectangle().contains(p.nextSwitchPoint)) {
 
-			//System.out.println("switching road");
 			car.backCar = null;
 			p.switchRoad(car);
-
 		}
 
+		//leaves intersection
 		if (!car.inIntersection() && p.inIntersection) {
-			//System.out.println("leaving intersection " + car.getName().split("@")[0]);
+			 
 			DFAgentDescription template = new DFAgentDescription();
 			ServiceDescription sd = new ServiceDescription();
 			sd.setType("intersection");
@@ -102,6 +109,7 @@ public class CarMoving extends TickerBehaviour {
 			}
 		}
 
+		//car done 
 		if (car.isOutOfBounds()) {
 			//System.out.println("CAR WAITED " + (double) (ticksWaiting * 50) / 1000.0 + " SECONDS");
 			this.myAgent.doDelete(); 
@@ -115,8 +123,6 @@ public class CarMoving extends TickerBehaviour {
 	 */
 	public void requestIntersection() {
 		
-		
-		//System.out.println("Requesting entry in road RoadAgent" + car.getPath().getNextRoad());
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		
 		msg.setContent("REQUEST_INTERSECTION;RoadAgent"+car.getPath().getNextRoad()+";"+

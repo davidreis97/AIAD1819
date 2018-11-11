@@ -13,17 +13,22 @@ import javax.swing.JPanel;
 import src.agents.Car;
 import src.graph.Road.Direction;
 
+/*
+ * Represents the map
+ */
 public class Map extends JPanel {
 
-	public static HashMap<String, Intersection> intersections;
-	public static HashMap<String, Road> roads;
-	public static ArrayList<Car> cars;
+	public static HashMap<String, Intersection> intersections;	//Map intersections
+	public static HashMap<String, Road> roads;					//Map roads
+	public static ArrayList<Car> cars;							//Cars currently in the map
 		
-	public static int width;
-	public static final int  panel_size = 700;
-	public static int  unit ;
+	public static int width;									//Map width
+	public static final int panel_size = 700;					//Window size
+	public static int unit;
 	
-
+	/*
+	 * Constructor
+	 */
 	public Map(HashMap<String, Intersection> intersections2, HashMap<String, Road> roads2, int width2) {
 		
 		width = width2;
@@ -44,11 +49,16 @@ public class Map extends JPanel {
 		
 	}
 	
+	/*
+	 * Adds a car to the map
+	 */
 	public void addCar(Car car) {
 		Map.cars.add(car);
 	}
 
-
+	/*
+	 * Draw the map, with the cars
+	 */
 	public void paintComponent(Graphics g) {
 
 		// super.paint(g);
@@ -91,7 +101,7 @@ public class Map extends JPanel {
 
 		}
 		
-		// draw cars
+		// draw the cars
 		
 		for (int i = 0; i < cars.size();) {
 			Car c = cars.get(i);

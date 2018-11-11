@@ -39,11 +39,16 @@ public class CarSpawner extends Agent {
 	
 	private ArrayList<String> initialPoints;
 	
+	/*
+	 * Constructor
+	 */
 	public CarSpawner(ContainerController container, Map mapa) {
 		this.container = container;
 		this.mapa = mapa;
 		this.starters = new ArrayList<ArrayList<String>>(); 
 		this.initialPoints = new ArrayList<>();
+			
+		//Get the initial points of the map
 		
 		for (Entry<String, Road> entry : Map.roads.entrySet()) {
 		    Road road = entry.getValue();
@@ -54,19 +59,25 @@ public class CarSpawner extends Agent {
 		}
 	}
 	
-	public void checkIfInitialRoadHasSpace() {
-		if(starters.size() > 0) {
-			//Obtem um road agent ao calhas de entre aqueles que estao na lista para entrar
-			latestAgentChecked = (int) (Math.random()*starters.size());
-			String roadAgentName = "RoadAgent" + starters.get(latestAgentChecked).get(0);			
-			AID roadAgent = getAID(roadAgentName);
-			ACLMessage sendMsg = new ACLMessage(ACLMessage.INFORM);
-			sendMsg.setContent(Messages.MessageType.POLL_SPACE.toString());
-			sendMsg.addReceiver(roadAgent);
-			send(sendMsg);
-		}
-	}
 	
+	public void setup() {
+
+		// Behavior that represents the car spawner receiving the messages
+		addBehaviour(new ReceiveMessageBehaviour());
+		
+		// Behavior that represents the car spawner checking the road space
+		addBehaviour(new TickerBehaviour(this,SPAWN_INTERVAL) {
+
+			@Override
+			protected void onTick() {
+				checkIfInitialRoadHasSpace();
+			}
+		});
+	}
+
+	/*
+	 * Receives the space information
+	 */
 	public class ReceiveMessageBehaviour extends CyclicBehaviour{
 
 		@Override
@@ -85,6 +96,7 @@ public class CarSpawner extends Agent {
 				switch(msgType) {
 					case SPACE_INFO:{
 						String status = Messages.getMessageContent(msg.getContent())[0];
+						
 						if(status.equals("FREE")){
 							if(starters.size() > 0) {
 								ArrayList<String> path = starters.get(latestAgentChecked);
@@ -105,29 +117,34 @@ public class CarSpawner extends Agent {
 					}
 				}
 			}else {
-				//block();
+				block();
 			}
-		}
-			
-	}
-
-	
-	public void setup() {
-		Random rnd = new Random();
-		
-		addBehaviour(new ReceiveMessageBehaviour());
-		
-		addBehaviour(new TickerBehaviour(this,SPAWN_INTERVAL) {
-
-			@Override
-			protected void onTick() {
-				checkIfInitialRoadHasSpace();
-			}
-			
-		});
+		}	
 	}
 	
+	
+	/*
+	 * Check if the initial road has space
+	 */
+	public void checkIfInitialRoadHasSpace() {
+			
+		//choose a random agent waiting 
+		latestAgentChecked = (int) (Math.random()*starters.size());
+		String roadAgentName = "RoadAgent" + starters.get(latestAgentChecked).get(0);			
+		AID roadAgent = getAID(roadAgentName);
+			
+		ACLMessage sendMsg = new ACLMessage(ACLMessage.INFORM);
+		sendMsg.setContent(Messages.MessageType.POLL_SPACE.toString());
+		sendMsg.addReceiver(roadAgent);
+		send(sendMsg);
+	}
+	
+	
+	/*
+	 * Generate a random path for the car agents
+	 */
 	public ArrayList<String> generateRandomPath(){
+		
 		Road currentRoad = Map.roads.get(initialPoints.get((int) (Math.random() * initialPoints.size())));
 		Intersection nextIntersection = currentRoad.getIntersection();
 		

@@ -51,6 +51,10 @@ public class IntersectionAgent extends Agent {
 	protected HashMap<AID, Rectangle> intersectionRectangles;
 	protected boolean nextRoadOccupied = false;
 
+	
+	/*
+	 * Constructor
+	 */
 	public IntersectionAgent(int index) {
 		super();
 		this.index = index;

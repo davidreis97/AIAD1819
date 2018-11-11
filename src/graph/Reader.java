@@ -16,10 +16,16 @@ import org.xml.sax.SAXException;
 
 import src.graph.Road.Direction;
 
+/*
+ * Reader of an xml file representing the map
+ */
 public class Reader {
 
 	private Document doc;
-
+	
+	/*
+	 * Constructor
+	 */
 	public Reader(String filename) throws ParserConfigurationException, IOException, SAXException {
 
 		File inputFile = new File(filename);
@@ -29,6 +35,9 @@ public class Reader {
 		doc.getDocumentElement().normalize();
 	}
 
+	/*
+	 * Returns the intersections in the map
+	 */
 	public HashMap<String, Intersection> getIntersections() {
 
 		HashMap<String, Intersection> intersections = new HashMap<String, Intersection>();
@@ -63,6 +72,9 @@ public class Reader {
 		return intersections;
 	}
 
+	/*
+	 * Returns the roads in the map
+	 */
 	public HashMap<String, Road> getRoads(HashMap<String, Intersection> intersections) {
 
 		HashMap<String, Road> roads = new HashMap<String, Road>();
@@ -154,6 +166,9 @@ public class Reader {
 		return roads;
 	}
 
+	/*
+	 * Returns the paths in the map
+	 */
 	public HashMap<String, ArrayList<String>> getPaths() {
 
 		HashMap<String, ArrayList<String>> paths = new HashMap<String, ArrayList<String>>();
@@ -196,7 +211,9 @@ public class Reader {
 		return paths;
 	}
 
-	
+	/*
+	 * Returns the map size
+	 */
 	public Integer getMapSize() {
 
 		Integer res = null;
