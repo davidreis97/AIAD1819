@@ -23,12 +23,15 @@ import src.graph.Intersection;
 import src.graph.Map;
 import src.graph.Reader;
 import src.graph.Road;
+import src.resources.CMDArgs;
 
 public class JADELauncher {
-
-	private static String filename = "maps/teste.xml";
 	
 	public static void main(String[] args) {
+		
+		CMDArgs.ALGORITHM = args[0];
+		CMDArgs.SPAWN_RATE = Integer.parseInt(args[1]);
+		CMDArgs.MAP_FILE = args[2];
 
 		Runtime rt = Runtime.instance();
 	 
@@ -38,7 +41,7 @@ public class JADELauncher {
 		
 		Reader reader = null;
         try {
-            reader = new Reader(filename);
+            reader = new Reader(CMDArgs.MAP_FILE);
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         } catch (IOException e) {

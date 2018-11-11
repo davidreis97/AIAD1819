@@ -18,6 +18,7 @@ import src.resources.Messages.MessageType;
 import src.resources.Rectangle;
 import src.graph.Map;
 import src.graph.Road;
+import src.resources.CMDArgs;
 import src.resources.Messages;
 
 /*
@@ -34,7 +35,8 @@ public class IntersectionAgent extends Agent {
 	}
 
 	// Chosen algorithm
-	protected static final SelectionAlgorithm ALGORITHM = SelectionAlgorithm.RANDOM_NEXT;
+	
+	protected static SelectionAlgorithm ALGORITHM;
 
 	// Cars waiting in the intersection
 	protected LinkedList<SimpleEntry<AID, String>> waitingCars;
@@ -52,6 +54,17 @@ public class IntersectionAgent extends Agent {
 	public IntersectionAgent(int index) {
 		super();
 		this.index = index;
+		
+		if(CMDArgs.ALGORITHM.equals("fcfs")) {
+			ALGORITHM = SelectionAlgorithm.FIRST_COME_FIRST_SERVED;
+		}else if(CMDArgs.ALGORITHM.equals("cd")) {
+			ALGORITHM = SelectionAlgorithm.COLLISION_DETECTION;
+		}else if(CMDArgs.ALGORITHM.equals("rn")){
+			ALGORITHM = SelectionAlgorithm.RANDOM_NEXT;
+		}else {
+			System.out.println("Error: Unknown Algorithm " + CMDArgs.ALGORITHM + " using RANDOM_NEXT by default");
+			ALGORITHM = SelectionAlgorithm.RANDOM_NEXT;
+		}
 	}
 
 	public void setup() {

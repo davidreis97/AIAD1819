@@ -19,6 +19,7 @@ import src.graph.Intersection;
 import src.graph.Map;
 import src.graph.Road;
 import src.graph.Road.Direction;
+import src.resources.CMDArgs;
 import src.resources.Messages;
 import src.resources.Messages.MessageType;
 
@@ -27,8 +28,7 @@ import src.resources.Messages.MessageType;
  */
 public class CarSpawner extends Agent {
 	
-	public static final int GENERATE_RANDOM_TIME = 20;	//s
-	public static final int SPAWN_INTERVAL = 20;	//s
+	public static final int SPAWN_INTERVAL = CMDArgs.SPAWN_RATE;	//s
 	
 	private ContainerController container;
 	private Map mapa;
@@ -117,7 +117,7 @@ public class CarSpawner extends Agent {
 		
 		addBehaviour(new ReceiveMessageBehaviour());
 		
-		addBehaviour(new TickerBehaviour(this,100) {
+		addBehaviour(new TickerBehaviour(this,SPAWN_INTERVAL) {
 
 			@Override
 			protected void onTick() {
