@@ -42,7 +42,7 @@ public class CarMoving extends TickerBehaviour {
 		if (car.inIntersection()) {
 
 			if (!p.inIntersection && !p.waitingIntersection) { // send the request
-				System.out.println("new intersection");
+				//System.out.println("new intersection");
 				p.setWaitingIntersection();
 
 				requestIntersection();
@@ -79,14 +79,14 @@ public class CarMoving extends TickerBehaviour {
 		
 		if (p.inIntersection && p.nextSwitchPoint!=null && car.getRectangle().contains(p.nextSwitchPoint)) {
 
-			System.out.println("switching road");
+			//System.out.println("switching road");
 			car.backCar = null;
 			p.switchRoad(car);
 
 		}
 
 		if (!car.inIntersection() && p.inIntersection) {
-			System.out.println("leaving intersection " + car.getName().split("@")[0]);
+			//System.out.println("leaving intersection " + car.getName().split("@")[0]);
 			DFAgentDescription template = new DFAgentDescription();
 			ServiceDescription sd = new ServiceDescription();
 			sd.setType("intersection");
@@ -103,7 +103,7 @@ public class CarMoving extends TickerBehaviour {
 		}
 
 		if (car.isOutOfBounds()) {
-			System.out.println("CAR WAITED " + (double) (ticksWaiting * 50) / 1000.0 + " SECONDS");
+			//System.out.println("CAR WAITED " + (double) (ticksWaiting * 50) / 1000.0 + " SECONDS");
 			this.myAgent.doDelete(); 
 			return;
 		}
@@ -116,7 +116,7 @@ public class CarMoving extends TickerBehaviour {
 	public void requestIntersection() {
 		
 		
-		System.out.println("Requesting entry in road RoadAgent" + car.getPath().getNextRoad());
+		//System.out.println("Requesting entry in road RoadAgent" + car.getPath().getNextRoad());
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		
 		msg.setContent("REQUEST_INTERSECTION;RoadAgent"+car.getPath().getNextRoad()+";"+

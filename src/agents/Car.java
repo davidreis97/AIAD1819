@@ -39,10 +39,11 @@ public class Car extends Agent {
 		this.velocity = new Point(r.getVelocity()); 	 // velocity
 		this.location = new Point(r.getInitialPoint());  // location
 
-		System.out.println("Hello this is mr car; path: " + path.toString());
+		System.out.print("Hello this is mr car;  path: " + path.toString());
 	}
 
 	public void setup() {
+		System.out.println( "; " +this.getLocalName() );
 
 		// Subscribe initial road
 		subscribeRoad(path.getCurrentRoadName());		
@@ -52,6 +53,7 @@ public class Car extends Agent {
 
 		// Behavior that represents the car moving
 		addBehaviour(new CarMoving(this, 50));
+		
 
 	}
 	

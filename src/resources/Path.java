@@ -63,7 +63,7 @@ public class Path {
 	 */
 	public void setWaitingIntersection() {
 		
-		System.out.println("Set in intersection " + currentRoad.getIntersection());
+		//System.out.println("Set in intersection " + currentRoad.getIntersection());
 
 		waitingIntersection = true;
 

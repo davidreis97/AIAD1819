@@ -31,7 +31,7 @@ public class JADELauncher {
 	public static void main(String[] args) {
 
 		Runtime rt = Runtime.instance();
-
+	 
 		Profile p1 = new ProfileImpl();
 		ContainerController mainContainer = rt.createMainContainer(p1);
 		

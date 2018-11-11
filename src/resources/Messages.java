@@ -20,6 +20,7 @@ public class Messages {
 		REQUEST_ACCEPTED, 
 		POLL_SPACE,
 		SPACE_INFO,
+		NEW_CAR
 	}
 	
 	public static String[] getMessageContent(String message) {
