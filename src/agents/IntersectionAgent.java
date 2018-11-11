@@ -375,10 +375,37 @@ public class IntersectionAgent extends Agent {
 		ArrayList<AID> carros = findCarInStreet(msg.getSender().getName().split("@")[0]);
 
 		if (!intersectionOccupied) {
-
+			
+			//choose a random car from among the ones that want to go to the road
 			AID car = carros.get(new Random().nextInt(carros.size()));
 			acceptCar(car);
+			System.out.println("Accepted");
+			
+			//save the rest to the confirmationReceived list
+			
+			for (AID carToSave : carros) {
+				
+				if(carToSave != car) {
+					
+					SimpleEntry<AID, String> entry = new SimpleEntry<AID, String>(carToSave,
+							msg.getSender().getName().split("@")[0]);
+					
+					boolean alreadySaved = false;
 
+					for (int i = 0; i < confirmationReceived.size(); i++) {
+						if (confirmationReceived.get(i).getKey().equals(carToSave)) {
+							alreadySaved = true;
+							break;
+						}
+					}
+
+					if (!alreadySaved) {
+						confirmationReceived.add(entry);
+					}
+					
+				}
+			}
+		
 		} else {
 
 			for (AID car : carros) {
