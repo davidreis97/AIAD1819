@@ -11,6 +11,10 @@ import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.core.behaviours.WakerBehaviour;
+import jade.domain.DFService;
+import jade.domain.FIPAException;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
@@ -37,7 +41,7 @@ public class CarSpawner extends Agent {
 	private ArrayList<ArrayList<String>> starters;
 	private int latestAgentChecked;
 	
-	private ArrayList<String> initialPoints;
+	private ArrayList<AID> initialPoints;
 	
 	/*
 	 * Constructor
@@ -46,21 +50,28 @@ public class CarSpawner extends Agent {
 		this.container = container;
 		this.mapa = mapa;
 		this.starters = new ArrayList<ArrayList<String>>(); 
-		this.initialPoints = new ArrayList<>();
-			
-		//Get the initial points of the map
-		
-		for (Entry<String, Road> entry : Map.roads.entrySet()) {
-		    Road road = entry.getValue();
-		    if ((road.startIntersection == null && (road.getDirection() == Direction.RIGHT || road.getDirection() == Direction.DOWN)) || 
-		    	(road.endIntersection == null && (road.getDirection() == Direction.UP || road.getDirection() == Direction.LEFT))) {
-		    	this.initialPoints.add(entry.getKey());
-		    }
-		}
 	}
 	
 	
 	public void setup() {
+		
+		this.initialPoints = new ArrayList<>();
+		
+		//Get the initial points of the map
+		DFAgentDescription template = new DFAgentDescription();
+		ServiceDescription sd = new ServiceDescription();
+		sd.setType("road");
+		sd.setName("entranceRoad");
+		template.addServices(sd);
+		
+		try {
+			DFAgentDescription[] result = DFService.search(this, template);
+			for(int i = 0; i < result.length; i++) {
+				initialPoints.add(result[i].getName());
+			}
+		}catch (FIPAException fe) {
+			fe.getStackTrace();
+		}
 
 		// Behavior that represents the car spawner receiving the messages
 		addBehaviour(new ReceiveMessageBehaviour());
@@ -145,7 +156,9 @@ public class CarSpawner extends Agent {
 	 */
 	public ArrayList<String> generateRandomPath(){
 		
-		Road currentRoad = Map.roads.get(initialPoints.get((int) (Math.random() * initialPoints.size())));
+		AID roadAgent = initialPoints.get((int) (Math.random() * initialPoints.size()));
+		int roadIndex = Integer.parseInt(roadAgent.getName().split("@")[0].split("RoadAgent")[1]);
+		Road currentRoad = Map.roads.get(""+roadIndex);
 		Intersection nextIntersection = currentRoad.getIntersection();
 		
 		ArrayList<String> path = new ArrayList<>();

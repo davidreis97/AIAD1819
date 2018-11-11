@@ -8,8 +8,14 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
+import jade.domain.DFService;
+import jade.domain.FIPAException;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import src.graph.Map;
+import src.graph.Road.Direction;
 import src.resources.Messages;
 import src.resources.Messages.*;
 
@@ -23,18 +29,36 @@ public class RoadAgent extends Agent {
 		
 	private int maxCars;			//Max cars in the road
  	private int waitingForCars;		//Cars that are allocated to enter the road
-
+ 	private int roadIndex;
+ 	
  	/*
 	 * Constructor
 	 */
- 	public RoadAgent(int maxCars) {
+ 	public RoadAgent(int maxCars, int roadIndex) {
 		super();
 		this.maxCars = maxCars;
 		this.waitingForCars = 0;
+		this.roadIndex = roadIndex;
 	}
 
 	public void setup() {		
 	
+		
+		if ((Map.roads.get(""+roadIndex).startIntersection == null && (Map.roads.get(""+roadIndex).getDirection() == Direction.RIGHT || Map.roads.get(""+roadIndex).getDirection() == Direction.DOWN)) || 
+		    	(Map.roads.get(""+roadIndex).endIntersection == null && (Map.roads.get(""+roadIndex).getDirection() == Direction.UP || Map.roads.get(""+roadIndex).getDirection() == Direction.LEFT))) {
+			DFAgentDescription dfd = new DFAgentDescription();
+			dfd.setName(getAID());
+			ServiceDescription sd = new ServiceDescription();
+			sd.setType("road");
+			sd.setName("entranceRoad");
+			dfd.addServices(sd);
+			try {
+				DFService.register(this,dfd);
+			}catch (FIPAException fe) {
+				fe.printStackTrace();
+			}
+		}
+		
 		//Behaviour that represents the road agent receiving the messages
 		addBehaviour(new ListeningBehaviour());
 		

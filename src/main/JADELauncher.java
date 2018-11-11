@@ -13,6 +13,7 @@ import org.xml.sax.SAXException;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
@@ -23,6 +24,7 @@ import src.graph.Intersection;
 import src.graph.Map;
 import src.graph.Reader;
 import src.graph.Road;
+import src.graph.Road.Direction;
 import src.resources.CMDArgs;
 
 public class JADELauncher {
@@ -87,9 +89,8 @@ public class JADELauncher {
 		AgentController ac4;
 		
 		for(int i=1; i<=Map.roads.size(); i++) {
-			
 			try {
-				ac4 = mainContainer.acceptNewAgent("RoadAgent"+i, new RoadAgent(roads.get(""+i).maxCars));
+				ac4 = mainContainer.acceptNewAgent("RoadAgent"+i, new RoadAgent(roads.get(""+i).maxCars,i));
 
 				ac4.start();
 			} catch (StaleProxyException e) {
