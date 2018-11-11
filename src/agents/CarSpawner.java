@@ -39,6 +39,9 @@ public class CarSpawner extends Agent {
 	
 	private ArrayList<String> initialPoints;
 	
+	/*
+	 * Constructor
+	 */
 	public CarSpawner(ContainerController container, Map mapa) {
 		this.container = container;
 		this.mapa = mapa;

@@ -24,6 +24,9 @@ public class Car extends Agent {
 	
 	private Path path;
 	
+	/*
+	 * Constructor
+	 */
 	public Car(ArrayList<String> p) {
 
 		this.backCar = null;
@@ -180,7 +183,7 @@ public class Car extends Agent {
 	public void takeDown() {
 
 		removeCar("RoadAgent" + this.path.getCurrentRoadName());
-		System.out.println("Car is done");
+		System.out.println("Car "+this.getLocalName() +" is done");
 	}
 
 

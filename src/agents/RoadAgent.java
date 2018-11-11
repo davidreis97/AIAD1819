@@ -24,7 +24,10 @@ public class RoadAgent extends Agent {
 	private int maxCars;			//Max cars in the road
  	private int waitingForCars;		//Cars that are allocated to enter the road
 
-	public RoadAgent(int maxCars) {
+ 	/*
+	 * Constructor
+	 */
+ 	public RoadAgent(int maxCars) {
 		super();
 		this.maxCars = maxCars;
 		this.waitingForCars = 0;
@@ -116,23 +119,18 @@ public class RoadAgent extends Agent {
 			carros.add(msg.getSender());
 
 		
-		// check if the car has a car in front of him
-
 		int index = carros.indexOf(msg.getSender());
 		if (index != 0) {
 			AID front_car = carros.get(index - 1);
 
-			// inform this car that he has a car in front of him
-
-			String message = Messages.buildFrontCarMessage(front_car);
+			String message = Messages.buildFrontCarMessage(front_car);	//front car
 
 			ACLMessage reply = msg.createReply();
 			reply.setPerformative(ACLMessage.INFORM);
 			reply.setContent(message);
 			send(reply);
 
-			// and the other that he has a car at back
-			message = Messages.buildBackCarMessage(msg.getSender());
+			message = Messages.buildBackCarMessage(msg.getSender());	// back car
 			sendMessage(message, front_car);
 
 		}
@@ -142,8 +140,6 @@ public class RoadAgent extends Agent {
 	 * Removes the car from the cars list. Also informs the car in from of him that he no longer has a back car.
 	 */
 	public void handleUnsubscribe(ACLMessage msg) {
-
-		// inform the back car that he no longer has a front car
 
 		if (carros.size() >= 2) {
 			try {

@@ -1,10 +1,16 @@
 package src.graph;
 
+/*
+ * Represents a point in the map
+ */
 public class Point implements java.io.Serializable {
 
 	public double x;
 	public double y;
 
+	/*
+	 * Constructor
+	 */
 	public Point(double x, double y) {
 		this.x = x;
 		this.y = y;
@@ -30,20 +36,27 @@ public class Point implements java.io.Serializable {
 	public String toString() {
 		return x + "," + y;
 	}
-
+	
+	/*
+	 * Returns the sum of two points
+	 */
 	public void add(Point point) {
 		this.x += point.x;
 		this.y += point.y;
 	}
 
+	/*
+	 * Returns the symetric of a point
+	 */
 	public Point symetric() {
 		return new Point(-this.x, -this.y);
 	}
 	
+	/*
+	 * Returns the distance between two points 
+	 */
 	public double distance(Point anotherPoint) {
 		return Math.sqrt(Math.pow((x-anotherPoint.x), 2) + Math.pow((y-anotherPoint.y), 2));
 	}
-
- 
 
 }

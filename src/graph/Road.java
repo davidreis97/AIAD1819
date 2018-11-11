@@ -1,24 +1,31 @@
 package src.graph;
 import src.resources.Rectangle;
 
+/*
+ * Represents a road in the map
+ */
 public class Road {
 
+	//Road directions
 	public enum Direction {
 		UP, DOWN, LEFT, RIGHT
 	}
 
-	public String name;
+	public String name;						//Road name
 
-	protected Point startPoint;
-	protected Point endPoint;
+	protected Point startPoint;				//Start point
+	protected Point endPoint;				//End point
 
-	public Intersection startIntersection;
-	public Intersection endIntersection;
+	public Intersection startIntersection;	//Start intersection
+	public Intersection endIntersection;	//End intersection
 
-	protected Direction direction;
+	protected Direction direction;			//Direction
 
-	public int maxCars;
+	public int maxCars;						//Max cars
 	
+	/*
+	 * Constructor
+	 */
 	public Road(String name, Point start, Point end, Intersection i1, Intersection i2, Direction dir) {
 
 		this.name = name;
@@ -34,6 +41,9 @@ public class Road {
 		this.direction = dir;
 	}
 
+	/*
+	 * Returns the velocity  
+	 */
 	public Point getVelocity() {
 
 		switch (direction) {
@@ -54,6 +64,9 @@ public class Road {
 		return null;
 	}
 
+	/*
+	 * Returns the initial point  
+	 */
 	public Point getInitialPoint() {
 		if(direction != Direction.UP && direction != Direction.LEFT) {
 			return startPoint;
@@ -61,10 +74,16 @@ public class Road {
 		return endPoint;
 	}
 
+	/*
+	 * Returns the direction
+	 */
 	public Direction getDirection() {
 		return direction;
 	}
 
+	/*
+	 * Checks if a rectangle intersects a road intersection
+	 */
 	public boolean inIntersection(Rectangle r) {
 
 		boolean res = false;
@@ -79,7 +98,9 @@ public class Road {
 		return res;
 	}
 	
-	
+	/*
+	 * Returns the next intersection the car will arrive
+	 */
 	public Intersection getIntersection() {
 		
 		if(direction == Direction.RIGHT || direction == Direction.DOWN) {
@@ -87,10 +108,12 @@ public class Road {
 		
 		} else {
 			return startIntersection;
-		}
-			 
+		}		 
 	}
-
+	
+	/*
+	 * Returns the end point of the road
+	 */
 	public Point getEndPoint() {
 		return endPoint;
 	}

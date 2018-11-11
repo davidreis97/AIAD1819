@@ -5,17 +5,22 @@ import src.graph.Road.Direction;
 
 import java.util.ArrayList;
 
+/*
+ * Represents an intersection in the map
+ */
 public class Intersection {
 
-	public String name;
+	public String name;						//Intersection name
 
-	private ArrayList<Road> inRoads;
-	private ArrayList<Road> outRoads;
+	private ArrayList<Road> inRoads;	 	//In roads
+	private ArrayList<Road> outRoads;	 	//Out roads
 
-	private Rectangle area;
+	private Rectangle area;					//Area of the intersection
+	private Point location;					//Intersection location
 
-	private Point location;
-
+	/*
+	 * Constructor
+	 */
 	public Intersection(String name, Point loc) {
 
 		this.inRoads = new ArrayList<Road>();
@@ -25,27 +30,40 @@ public class Intersection {
 
 		this.location = loc;
 
-		// x, y, width, height
 		this.area = new Rectangle(loc.x - 1, loc.y - 1, 2, 2);
-
 	}
 
+	/*
+	 * Get location
+	 */
 	public Point getLocation() {
 		return location;
 	}
 
+	/*
+	 * Add in road
+	 */
 	public void addInRoad(Road r) {
 		this.inRoads.add(r);
 	}
 
+	/*
+	 * Add out road
+	 */
 	public void addOutRoad(Road r) {
 		this.outRoads.add(r);
 	}
 
+	/*
+	 * Checks if other rectangle intersects the intersection area
+	 */
 	public boolean inIntersection(Rectangle r2) {
 		return area.intersects(r2);
 	}
 
+	/*
+	 * Get out road according to the name
+	 */
 	public Road getOutRoad(String road) {
 
 		Road nextR = null;
@@ -56,10 +74,12 @@ public class Intersection {
 				break;
 			}
 		}
-
 		return nextR;
 	}
 
+	/*
+	 * Get a random out road, from a given road
+	 */
 	public Road getRandomOutRoad(Road currentRoad) {
 		Road outRoad = null;
 		Point exitPoint = null;
@@ -70,6 +90,9 @@ public class Intersection {
 		return outRoad;
 	}
 
+	/*
+	 * Get the exit point, given the in and out roads
+	 */
 	public Point getExitPoint(Road currentRoad, Road nextRoad) {
 		Point exitPoint = null;
 
@@ -83,7 +106,7 @@ public class Intersection {
 				exitPoint = new Point(this.location.x + 1 + .2, this.location.y + 0.5);
 
 			} else if (nextRoad.direction == Direction.DOWN) {
-				exitPoint = new Point(this.location.x + .2, this.location.y + 0.5); // !!
+				exitPoint = new Point(this.location.x + .2, this.location.y + 0.5);  
 			}
 
 			break;
@@ -130,13 +153,18 @@ public class Intersection {
 
 		return exitPoint;
 	}
-
+	
+	/*
+	 * Get the exit point, given the in road, and out road name
+	 */
 	public Point getExitPoint(Road currentRoad, String nextRoad) {
 		Road nextR = getOutRoad(nextRoad);
 		return getExitPoint(currentRoad, nextR);
 	}
 	
-
+	/*
+	 * Returns the area that a car will occupy in the intersection, given the in and out roads
+	 */
 	public Rectangle getAreaOccupied(String inRoad, String outRoad) {
 
 		Road in=null;
@@ -161,7 +189,7 @@ public class Intersection {
 		switch (in.direction) {
 			case RIGHT: {
 	
-				if (out.direction == Direction.RIGHT) {	//meio
+				if (out.direction == Direction.RIGHT) {	//half
 					 
 					res = new Rectangle(this.location.x-1, this.location.y, 2, 1);
 	
@@ -176,7 +204,7 @@ public class Intersection {
 			}
 			case LEFT: {
 	
-				if (out.direction == Direction.LEFT) {//meio
+				if (out.direction == Direction.LEFT) {	// half
 					
 					res = new Rectangle(this.location.x-1, this.location.y-1, 2, 1);
 					 
@@ -192,7 +220,7 @@ public class Intersection {
 			}
 			case UP: {
 				
-				if (out.direction == Direction.UP) {	//meio
+				if (out.direction == Direction.UP) {	//half
 					
 					res = new Rectangle(this.location.x, this.location.y-1, 1, 2);
 	
@@ -208,7 +236,7 @@ public class Intersection {
 			}
 			case DOWN: {
 	
-				if (out.direction == Direction.DOWN) {	//meio
+				if (out.direction == Direction.DOWN) {	//half
 				 
 					res = new Rectangle(this.location.x-1, this.location.y-1, 1, 2);
 	
