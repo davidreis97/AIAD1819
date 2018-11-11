@@ -267,11 +267,16 @@ public class IntersectionAgent extends Agent {
 	private void checkNextRoadOccupied() {
 
 		if (waitingCars.size() > 0) {
-			AID roadAgent = getAID(waitingCars.peek().getValue());
-			ACLMessage sendMsg = new ACLMessage(ACLMessage.INFORM);
-			sendMsg.setContent(Messages.MessageType.POLL_SPACE.toString());
-			sendMsg.addReceiver(roadAgent);
-			send(sendMsg);
+			
+			for (int i = 0; i < waitingCars.size(); i++) {
+				 
+				AID roadAgent = getAID(waitingCars.get(i).getValue());
+				ACLMessage sendMsg = new ACLMessage(ACLMessage.INFORM);
+				sendMsg.setContent(Messages.MessageType.POLL_SPACE.toString());
+				sendMsg.addReceiver(roadAgent);
+				send(sendMsg);
+			}
+				
 		}
 	}
 
