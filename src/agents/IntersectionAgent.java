@@ -26,7 +26,7 @@ public class IntersectionAgent extends Agent {
 		FIRST_COME_FIRST_SERVED, COLLISION_DETECTION, RANDOM_NEXT
 	}
 	
-	protected static final SelectionAlgorithm ALGORITHM = SelectionAlgorithm.COLLISION_DETECTION; 	
+	protected static final SelectionAlgorithm ALGORITHM = SelectionAlgorithm.FIRST_COME_FIRST_SERVED; 	
 	
 	protected LinkedList<SimpleEntry<AID,String>> waitingCars;
 
@@ -68,9 +68,9 @@ public class IntersectionAgent extends Agent {
 		this.waitingCars = new LinkedList<SimpleEntry<AID,String>>();
 		
 		if(ALGORITHM == SelectionAlgorithm.FIRST_COME_FIRST_SERVED) {
-			//addBehaviour(new FirstComeFirstServedBehaviour(this,100));
+			addBehaviour(new FirstComeFirstServedBehaviour(this,100));
 		}else if(ALGORITHM == SelectionAlgorithm.RANDOM_NEXT) {
-			//addBehaviour(new RandomNextBehaviour(this,10));
+			addBehaviour(new RandomNextBehaviour(this,10));
 		
 		}else if(ALGORITHM == SelectionAlgorithm.COLLISION_DETECTION) {
 			
@@ -93,9 +93,7 @@ public class IntersectionAgent extends Agent {
 		public void onTick() {			
 						
 			ACLMessage msg = receive();
-			
-			checkNextRoadOccupied();
-								
+											
 			if (msg != null) {
 				
 				MessageType type = Messages.getMessageType(msg.getContent());
@@ -204,9 +202,7 @@ public class IntersectionAgent extends Agent {
 		public void onTick() {			
 						
 			ACLMessage msg = receive();
-			
-			checkNextRoadOccupied();
-								
+											
 			if (msg != null) {
 				
 				MessageType type = Messages.getMessageType(msg.getContent());
@@ -222,11 +218,13 @@ public class IntersectionAgent extends Agent {
 					}
 					case SPACE_INFO:{
 						String status = Messages.getMessageContent(msg.getContent())[0];
-						if (status.equals("FREE")) {
-							nextRoadOccupied = false;
-							checkCarsInQueue(msg.getSender().getName().split("@")[0]);
-						}else if(status.equals("FULL")) {
-							nextRoadOccupied = true;
+						if (status.equals("FREE") && !intersectionOccupied) {
+							AID car = findCarInStreet(msg.getSender().getName().split("@")[0]);
+							acceptCar(car);
+						}else {
+							ACLMessage sendMsg = msg.createReply();
+							sendMsg.setContent(Messages.MessageType.POLL_SPACE.toString());
+							send(sendMsg);
 						}
 						break;
 					}
@@ -239,6 +237,18 @@ public class IntersectionAgent extends Agent {
 		}
 	}
 	
+	public AID findCarInStreet(String roadAgent) {
+		for(SimpleEntry<AID,String> entry : waitingCars) {
+			if (entry.getValue().equals(roadAgent)){
+				return entry.getKey();
+			}
+		}
+		System.out.println("WARNING RECEIVED GO AHEAD FOR UNREQUESTED ROAD");
+		return null;
+	}
+	
+	
+	
 	class RandomNextBehaviour extends TickerBehaviour {
 
 		public RandomNextBehaviour(Agent a, long period) {
@@ -249,9 +259,7 @@ public class IntersectionAgent extends Agent {
 		public void onTick() {			
 						
 			ACLMessage msg = receive();
-			
-			checkNextRandomRoadOccupied();
-																	
+																				
 			if (msg != null) {
 				
 				MessageType type = Messages.getMessageType(msg.getContent());
@@ -333,7 +341,13 @@ public class IntersectionAgent extends Agent {
 		if (!msg.getSender().equals(intersectionCar) && !inWaitingCars(msg.getSender())) {
 			
 			String roadAgentName = msg.getContent().split(Messages.SEPARATOR)[1];
-			waitingCars.add(new SimpleEntry<AID,String>(msg.getSender(),roadAgentName));
+			SimpleEntry<AID,String> entry = new SimpleEntry<AID,String>(msg.getSender(),roadAgentName);
+			waitingCars.add(entry);
+			AID roadAgent = getAID(roadAgentName);
+			ACLMessage sendMsg = new ACLMessage(ACLMessage.INFORM);
+			sendMsg.setContent(Messages.MessageType.POLL_SPACE.toString());
+			sendMsg.addReceiver(roadAgent);
+			send(sendMsg);
 		}		
 	}
 	
@@ -366,7 +380,6 @@ public class IntersectionAgent extends Agent {
 				
 		if(ALGORITHM != SelectionAlgorithm.COLLISION_DETECTION) {
 			intersectionOccupied = true;
-			nextRoadOccupied = true; //Might not be true but we'll assume it is and check again for the next car
 
 			intersectionCar = car;
 		}

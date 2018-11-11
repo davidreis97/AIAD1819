@@ -1,6 +1,9 @@
 package src.agents;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -15,17 +18,21 @@ import src.resources.Messages.*;
 public class RoadAgent extends Agent {
 
 	ArrayList<AID> carros;
+	Queue<AID> intersecoes;
 	
 	private int maxCars;
+	private int waitingForCars;
 
 	public RoadAgent(int maxCars) {
 		super();
 		this.maxCars = maxCars;
+		this.waitingForCars = 0;
 	}
 
 	public void setup() {		
 		addBehaviour(new ListeningBehaviour());
 		carros = new ArrayList<AID>();
+		intersecoes = new LinkedList<AID>();
 	}
 
 	class ListeningBehaviour extends CyclicBehaviour {
@@ -47,31 +54,36 @@ public class RoadAgent extends Agent {
 						break;
 					}
 					case POLL_SPACE:{
-						if(carros.size() >= maxCars) {
-							ACLMessage reply = msg.createReply();
-							reply.setPerformative(ACLMessage.INFORM);
-							reply.setContent(Messages.buildHasSpaceMessage("FULL"));
-							send(reply);
-						}else{
-							ACLMessage reply = msg.createReply();
-							reply.setPerformative(ACLMessage.INFORM);
-							reply.setContent(Messages.buildHasSpaceMessage("FREE"));
-							send(reply);
-						}
+						intersecoes.add(msg.getSender());
 						break;
 					}
 					default: {
 						break;
 					}
 				}
+				
+				checkEmptySpace();
 			} else {
 				block();
 			}
 		}
 	}
+	
+	public void checkEmptySpace() {
+		if(carros.size() + waitingForCars < maxCars) {
+			AID inter = intersecoes.poll();
+			ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+			msg.addReceiver(inter);
+			msg.setContent(Messages.buildHasSpaceMessage("FREE"));
+			send(msg);
+			waitingForCars++;
+		}
+	}
 
 	public void handleSubscribe(ACLMessage msg) {
 
+		if (waitingForCars > 0) waitingForCars--;
+		
 		// add car to the list
 		if (!carros.contains(msg.getSender()))
 			carros.add(msg.getSender());

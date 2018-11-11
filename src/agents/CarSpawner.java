@@ -28,7 +28,7 @@ import src.resources.Messages.MessageType;
 public class CarSpawner extends Agent {
 	
 	public static final int GENERATE_RANDOM_TIME = 20;	//s
-	public static final int SPAWN_INTERVAL = 1;	//s
+	public static final int SPAWN_INTERVAL = 20;	//s
 	
 	private ContainerController container;
 	private Map mapa;
@@ -77,7 +77,6 @@ public class CarSpawner extends Agent {
 				starters.add(path);
 			}
 			
-			
 			ACLMessage msg = receive();
 			
 			if(msg != null) {
@@ -118,7 +117,7 @@ public class CarSpawner extends Agent {
 		
 		addBehaviour(new ReceiveMessageBehaviour());
 		
-		addBehaviour(new TickerBehaviour(this,1) {
+		addBehaviour(new TickerBehaviour(this,100) {
 
 			@Override
 			protected void onTick() {
