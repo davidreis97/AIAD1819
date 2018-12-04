@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -25,6 +27,7 @@ import src.graph.Road;
 import src.graph.Road.Direction;
 import src.resources.CMDArgs;
 import src.resources.Messages;
+import src.resources.WriteExcel;
 import src.resources.Messages.MessageType;
 
 /*
@@ -72,7 +75,7 @@ public class CarSpawner extends Agent {
 		}catch (FIPAException fe) {
 			fe.getStackTrace();
 		}
-
+		
 		// Behavior that represents the car spawner receiving the messages
 		addBehaviour(new ReceiveMessageBehaviour());
 		
@@ -112,7 +115,11 @@ public class CarSpawner extends Agent {
 							if(starters.size() > 0) {
 								ArrayList<String> path = starters.get(latestAgentChecked);
 								
-								Car newCar = new Car(path);
+								//random velocity
+								int randomNum = ThreadLocalRandom.current().nextInt(1, 3 + 1);
+
+								
+								Car newCar = new Car(path, randomNum);
 								mapa.addCar(newCar);
 								
 								AgentController ac4;
@@ -171,6 +178,10 @@ public class CarSpawner extends Agent {
 		}
 		
 		return path;
+	}
+	
+	public void takeDown() {
+		WriteExcel.close();
 	}
 
 }

@@ -12,7 +12,9 @@ import src.agents.Car;
 import src.resources.Messages;
 import src.resources.Path;
 import src.graph.Point;
+import src.main.JADELauncher;
 import src.resources.Rectangle;
+import src.resources.WriteExcel;
 
 /*
  * Behaviour that represents the car moving
@@ -21,7 +23,8 @@ public class CarMoving extends TickerBehaviour {
 
 	private Car car;
 	
-	private int ticksWaiting;
+	private long ticksWaiting;
+	private long totalTicks;
 
 	/*
 	 * Constructor
@@ -35,7 +38,9 @@ public class CarMoving extends TickerBehaviour {
 
 	@Override
 	protected void onTick() {
-
+		
+		totalTicks++;
+		
 		// send the car position to the back car
 		if (car.backCar != null) {
 			sendPosition(car.backCar);
@@ -76,9 +81,9 @@ public class CarMoving extends TickerBehaviour {
 		}
 
 		if (canMove) {
-			
+		 
 			car.location.add(car.velocity);
-		
+	
 		}else {
 			ticksWaiting++;
 		}
@@ -112,6 +117,9 @@ public class CarMoving extends TickerBehaviour {
 		//car done 
 		if (car.isOutOfBounds()) {
 			//System.out.println("CAR WAITED " + (double) (ticksWaiting * 50) / 1000.0 + " SECONDS");
+			
+			WriteExcel.addCar(ticksWaiting, car.getLocalName(), car.initialTime, totalTicks, car.getPath(), car.carVelocity);
+	 
 			this.myAgent.doDelete(); 
 			return;
 		}

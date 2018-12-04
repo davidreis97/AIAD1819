@@ -118,4 +118,8 @@ public class Road {
 		return endPoint;
 	}
 
+	public double getDistance() {
+		 return Math.abs(this.startPoint.distance(this.endPoint));
+	}
+
 }

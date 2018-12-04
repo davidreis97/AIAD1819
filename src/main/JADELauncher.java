@@ -17,6 +17,7 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
+import jxl.write.WriteException;
 import src.agents.CarSpawner;
 import src.agents.IntersectionAgent;
 import src.agents.RoadAgent;
@@ -26,10 +27,15 @@ import src.graph.Reader;
 import src.graph.Road;
 import src.graph.Road.Direction;
 import src.resources.CMDArgs;
+import src.resources.WriteExcel;
 
 public class JADELauncher {
 	
+	public static long startTime;
+	
 	public static void main(String[] args) {
+		
+		WriteExcel.test();
 		
 		CMDArgs.ALGORITHM = args[0];
 		CMDArgs.SPAWN_RATE = Integer.parseInt(args[1]);
@@ -98,7 +104,9 @@ public class JADELauncher {
 			}
 			
 		}
-
+		
+		startTime = System.currentTimeMillis();
+		
 		/* CarSpawner */
 		CarSpawner carSpawner = new CarSpawner(mainContainer, mapa);
 		

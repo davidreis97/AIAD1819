@@ -58,5 +58,10 @@ public class Point implements java.io.Serializable {
 	public double distance(Point anotherPoint) {
 		return Math.sqrt(Math.pow((x-anotherPoint.x), 2) + Math.pow((y-anotherPoint.y), 2));
 	}
+	
+	public void mul(double val) {
+		this.x *= val;
+		this.y *= val;
+	}
 
 }

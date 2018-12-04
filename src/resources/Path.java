@@ -14,7 +14,7 @@ import src.graph.Road.Direction;
  */
 public class Path {
 
-	private ArrayList<String> path;				//List of road names
+	public ArrayList<String> path;				//List of road names
 
 	private Direction currentDirection;			//Current car direction
 		
@@ -115,6 +115,7 @@ public class Path {
 		this.currentRoad = Map.roads.get(currentRoadName);
 		this.currentDirection = currentRoad.getDirection();
 		car.velocity = currentRoad.getVelocity();
+		car.velocity.mul(car.carVelocity);
 	
 		nextSwitchPoint=null;
 	}
@@ -127,6 +128,49 @@ public class Path {
 			return path.get(currentIndex+1);
 		}
 		return "NONE";
+	}
+	
+	
+	public double getTotalDistance() {
+		
+		double totalDis=0;
+		
+		for(String s:path) {
+		
+			Road r = Map.roads.get(s);
+			totalDis+=r.getDistance();
+		}
+		
+		if(Map.roads.get(path.get(0)).getDirection()==Direction.LEFT ||
+				Map.roads.get(path.get(0)).getDirection()==Direction.UP ){
+			totalDis++;
+		}
+		
+		for(int i=0; i<path.size(); i++) {
+			
+			Road r = Map.roads.get(path.get(i));
+			Intersection inters =r.getIntersection();
+			if(inters==null) {
+				 break;
+			}
+			
+			Rectangle area = inters.getAreaOccupied(path.get(i), path.get(i+1));
+ 
+			if(area.area()==1.0) {
+				totalDis+=1;
+			}
+			else if(area.area()==2.0) {
+				totalDis+=2;
+			}
+			else if(area.area()==4.0) {
+				totalDis+=3;
+			}
+					 
+		}
+		
+		//totalDis+=(path.size()-1)*2;
+		
+		return totalDis;
 	}
 
 }

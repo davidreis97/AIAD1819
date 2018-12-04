@@ -1,0 +1,878 @@
+<file>
+
+    <size>30</size>
+
+    <intersections>
+
+        <intersection name="1">
+            <x>4</x>
+            <y>4</y>
+        </intersection>
+        <intersection name="2">
+            <x>10</x>
+            <y>4</y>
+        </intersection>
+        <intersection name="3">
+            <x>18</x>
+            <y>4</y>
+        </intersection>
+        <intersection name="4">
+            <x>25</x>
+            <y>4</y>
+        </intersection>
+
+        <intersection name="5">
+            <x>4</x>
+            <y>8</y>
+        </intersection>
+        <intersection name="6">
+            <x>10</x>
+            <y>8</y>
+        </intersection>
+        <intersection name="7">
+            <x>10</x>
+            <y>12</y>
+        </intersection>
+        <intersection name="8">
+            <x>18</x>
+            <y>12</y>
+        </intersection>
+
+        <intersection name="9">
+            <x>25</x>
+            <y>12</y>
+        </intersection>
+        <intersection name="10">
+            <x>4</x>
+            <y>16</y>
+        </intersection>
+        <intersection name="11">
+            <x>10</x>
+            <y>16</y>
+        </intersection>
+        <intersection name="12">
+            <x>18</x>
+            <y>16</y>
+        </intersection>
+
+         <intersection name="13">
+            <x>4</x>
+            <y>21</y>
+        </intersection>
+        <intersection name="14">
+            <x>11</x>
+            <y>21</y>
+        </intersection>
+        <intersection name="15">
+            <x>18</x>
+            <y>21</y>
+        </intersection>
+        <intersection name="16">
+            <x>25</x>
+            <y>21</y>
+        </intersection>
+
+        <intersection name="17">
+            <x>4</x>
+            <y>26</y>
+        </intersection>
+        <intersection name="18">
+            <x>11</x>
+            <y>26</y>
+        </intersection>
+        <intersection name="19">
+            <x>18</x>
+            <y>26</y>
+        </intersection>
+        <intersection name="20">
+            <x>25</x>
+            <y>26</y>
+        </intersection>
+    </intersections>
+    
+    <roads>
+        
+        <road name="1">
+            <x1>0</x1>
+            <y1>3</y1>
+            <x2>3</x2>
+            <y2>3</y2>
+            <intersection1>null</intersection1>
+            <intersection2>I1</intersection2>
+            <direction>left</direction>
+        </road>
+
+        <road name="2">
+            <x1>0</x1>
+            <y1>4</y1>
+            <x2>3</x2>
+            <y2>4</y2>
+            <intersection1>null</intersection1>
+            <intersection2>I1</intersection2>
+            <direction>right</direction>
+        </road>
+
+        <road name="3">
+            <x1>5</x1>
+            <y1>3</y1>
+            <x2>9</x2>
+            <y2>3</y2>
+            <intersection1>I1</intersection1>
+            <intersection2>I2</intersection2>
+            <direction>left</direction>
+        </road>
+
+        <road name="4">
+            <x1>5</x1>
+            <y1>4</y1>
+            <x2>9</x2>
+            <y2>4</y2>
+            <intersection1>I1</intersection1>
+            <intersection2>I2</intersection2>
+            <direction>right</direction>
+        </road>
+
+        <road name="5">
+            <x1>11</x1>
+            <y1>3</y1>
+            <x2>17</x2>
+            <y2>3</y2>
+            <intersection1>I2</intersection1>
+            <intersection2>I3</intersection2>
+            <direction>left</direction>
+        </road>
+
+        <road name="6">
+            <x1>11</x1>
+            <y1>4</y1>
+            <x2>17</x2>
+            <y2>4</y2>
+            <intersection1>I2</intersection1>
+            <intersection2>I3</intersection2>
+            <direction>right</direction>
+        </road>
+
+        <road name="7">
+            <x1>19</x1>
+            <y1>3</y1>
+            <x2>24</x2>
+            <y2>3</y2>
+            <intersection1>I3</intersection1>
+            <intersection2>I4</intersection2>
+            <direction>left</direction>
+        </road>
+
+        <road name="8">
+            <x1>19</x1>
+            <y1>4</y1>
+            <x2>24</x2>
+            <y2>4</y2>
+            <intersection1>I3</intersection1>
+            <intersection2>I4</intersection2>
+            <direction>right</direction>
+        </road>
+
+        <road name="9">
+            <x1>26</x1>
+            <y1>3</y1>
+            <x2>30</x2>
+            <y2>3</y2>
+            <intersection1>I4</intersection1>
+            <intersection2>null</intersection2>
+            <direction>left</direction>
+        </road>
+
+        <road name="10">
+            <x1>26</x1>
+            <y1>4</y1>
+            <x2>30</x2>
+            <y2>4</y2>
+            <intersection1>I4</intersection1>
+            <intersection2>null</intersection2>
+            <direction>right</direction>
+        </road>
+
+        <road name="11">
+            <x1>5</x1>
+            <y1>7</y1>
+            <x2>9</x2>
+            <y2>7</y2>
+            <intersection1>I5</intersection1>
+            <intersection2>I6</intersection2>
+            <direction>left</direction>
+        </road>
+
+        <road name="12">
+            <x1>5</x1>
+            <y1>8</y1>
+            <x2>9</x2>
+            <y2>8</y2>
+            <intersection1>I5</intersection1>
+            <intersection2>I6</intersection2>
+            <direction>right</direction>
+        </road>
+
+        <road name="13">
+            <x1>11</x1>
+            <y1>11</y1>
+            <x2>17</x2>
+            <y2>11</y2>
+            <intersection1>I7</intersection1>
+            <intersection2>I8</intersection2>
+            <direction>left</direction>
+        </road>
+
+        <road name="14">
+            <x1>11</x1>
+            <y1>12</y1>
+            <x2>17</x2>
+            <y2>12</y2>
+            <intersection1>I7</intersection1>
+            <intersection2>I8</intersection2>
+            <direction>right</direction>
+        </road>
+
+        <road name="15">
+            <x1>19</x1>
+            <y1>11</y1>
+            <x2>24</x2>
+            <y2>11</y2>
+            <intersection1>I8</intersection1>
+            <intersection2>I9</intersection2>
+            <direction>left</direction>
+        </road>
+
+        <road name="16">
+            <x1>19</x1>
+            <y1>12</y1>
+            <x2>24</x2>
+            <y2>12</y2>
+            <intersection1>I8</intersection1>
+            <intersection2>I9</intersection2>
+            <direction>right</direction>
+        </road>
+        <road name="17">
+            <x1>26</x1>
+            <y1>11</y1>
+            <x2>30</x2>
+            <y2>11</y2>
+            <intersection1>I9</intersection1>
+            <intersection2>null</intersection2>
+            <direction>left</direction>
+        </road>
+
+        <road name="18">
+            <x1>26</x1>
+            <y1>12</y1>
+            <x2>30</x2>
+            <y2>12</y2>
+            <intersection1>I9</intersection1>
+            <intersection2>null</intersection2>
+            <direction>right</direction>
+        </road> 
+
+        <road name="19">
+            <x1>0</x1>
+            <y1>15</y1>
+            <x2>3</x2>
+            <y2>15</y2>
+            <intersection1>null</intersection1>
+            <intersection2>I10</intersection2>
+            <direction>left</direction>
+        </road>
+
+        <road name="20">
+            <x1>0</x1>
+            <y1>16</y1>
+            <x2>3</x2>
+            <y2>16</y2>
+            <intersection1>null</intersection1>
+            <intersection2>I10</intersection2>
+            <direction>right</direction>
+        </road>
+
+        <road name="21">
+            <x1>5</x1>
+            <y1>15</y1>
+            <x2>9</x2>
+            <y2>15</y2>
+            <intersection1>I10</intersection1>
+            <intersection2>I11</intersection2>
+            <direction>left</direction>
+        </road>
+
+        <road name="22">
+            <x1>5</x1>
+            <y1>16</y1>
+            <x2>9</x2>
+            <y2>16</y2>
+            <intersection1>I10</intersection1>
+            <intersection2>I11</intersection2>
+            <direction>right</direction>
+        </road>
+
+        <road name="23">
+            <x1>11</x1>
+            <y1>15</y1>
+            <x2>17</x2>
+            <y2>15</y2>
+            <intersection1>I11</intersection1>
+            <intersection2>I12</intersection2>
+            <direction>left</direction>
+        </road>
+
+        <road name="24">
+            <x1>11</x1>
+            <y1>16</y1>
+            <x2>17</x2>
+            <y2>16</y2>
+            <intersection1>I11</intersection1>
+            <intersection2>I12</intersection2>
+            <direction>right</direction>
+        </road>
+
+        <road name="25">
+            <x1>5</x1>
+            <y1>20</y1>
+            <x2>10</x2>
+            <y2>20</y2>
+            <intersection1>I13</intersection1>
+            <intersection2>I14</intersection2>
+            <direction>left</direction>
+        </road>
+
+        <road name="26">
+            <x1>5</x1>
+            <y1>21</y1>
+            <x2>10</x2>
+            <y2>21</y2>
+            <intersection1>I13</intersection1>
+            <intersection2>I14</intersection2>
+            <direction>right</direction>
+        </road>
+        <road name="27">
+            <x1>12</x1>
+            <y1>20</y1>
+            <x2>17</x2>
+            <y2>20</y2>
+            <intersection1>I14</intersection1>
+            <intersection2>I15</intersection2>
+            <direction>left</direction>
+        </road>
+
+        <road name="28">
+            <x1>12</x1>
+            <y1>21</y1>
+            <x2>17</x2>
+            <y2>21</y2>
+            <intersection1>I14</intersection1>
+            <intersection2>I15</intersection2>
+            <direction>right</direction>
+        </road>
+        <road name="29">
+            <x1>19</x1>
+            <y1>20</y1>
+            <x2>24</x2>
+            <y2>20</y2>
+            <intersection1>I15</intersection1>
+            <intersection2>I16</intersection2>
+            <direction>left</direction>
+        </road>
+
+        <road name="30">
+            <x1>19</x1>
+            <y1>21</y1>
+            <x2>24</x2>
+            <y2>21</y2>
+            <intersection1>I15</intersection1>
+            <intersection2>I16</intersection2>
+            <direction>right</direction>
+        </road>
+
+
+
+        <road name="31">
+            <x1>5</x1>
+            <y1>25</y1>
+            <x2>10</x2>
+            <y2>25</y2>
+            <intersection1>I17</intersection1>
+            <intersection2>I18</intersection2>
+            <direction>left</direction>
+        </road>
+
+        <road name="32">
+            <x1>5</x1>
+            <y1>26</y1>
+            <x2>10</x2>
+            <y2>26</y2>
+            <intersection1>I17</intersection1>
+            <intersection2>I18</intersection2>
+            <direction>right</direction>
+        </road>
+
+        <road name="33">
+            <x1>12</x1>
+            <y1>25</y1>
+            <x2>17</x2>
+            <y2>25</y2>
+            <intersection1>I18</intersection1>
+            <intersection2>I19</intersection2>
+            <direction>left</direction>
+        </road>
+
+        <road name="34">
+            <x1>12</x1>
+            <y1>26</y1>
+            <x2>17</x2>
+            <y2>26</y2>
+            <intersection1>I18</intersection1>
+            <intersection2>I19</intersection2>
+            <direction>right</direction>
+        </road>
+        <road name="35">
+            <x1>19</x1>
+            <y1>25</y1>
+            <x2>24</x2>
+            <y2>25</y2>
+            <intersection1>I19</intersection1>
+            <intersection2>I20</intersection2>
+            <direction>left</direction>
+        </road>
+
+        <road name="36">
+            <x1>19</x1>
+            <y1>26</y1>
+            <x2>24</x2>
+            <y2>26</y2>
+            <intersection1>I19</intersection1>
+            <intersection2>I20</intersection2>
+            <direction>right</direction>
+        </road>
+        <road name="37">
+            <x1>26</x1>
+            <y1>25</y1>
+            <x2>30</x2>
+            <y2>25</y2>
+            <intersection1>I20</intersection1>
+            <intersection2>null</intersection2>
+            <direction>left</direction>
+        </road>
+
+        <road name="38">
+            <x1>26</x1>
+            <y1>26</y1>
+            <x2>30</x2>
+            <y2>26</y2>
+            <intersection1>I20</intersection1>
+            <intersection2>null</intersection2>
+            <direction>right</direction>
+        </road>
+
+
+
+        <!-- -->
+
+         <road name="39">
+            <x1>3</x1>
+            <y1>0</y1>
+            <x2>3</x2>
+            <y2>3</y2>
+            <intersection1>null</intersection1>
+            <intersection2>I1</intersection2>
+            <direction>down</direction>
+        </road>
+
+        <road name="40">
+            <x1>4</x1>
+            <y1>0</y1>
+            <x2>4</x2>
+            <y2>3</y2>
+            <intersection1>null</intersection1>
+            <intersection2>I1</intersection2>
+            <direction>up</direction>
+        </road>
+
+        <road name="41">
+            <x1>17</x1>
+            <y1>0</y1>
+            <x2>17</x2>
+            <y2>3</y2>
+            <intersection1>null</intersection1>
+            <intersection2>I3</intersection2>
+            <direction>down</direction>
+        </road>
+
+        <road name="42">
+            <x1>18</x1>
+            <y1>0</y1>
+            <x2>18</x2>
+            <y2>3</y2>
+            <intersection1>null</intersection1>
+            <intersection2>I3</intersection2>
+            <direction>up</direction>
+        </road>
+        <road name="43">
+            <x1>3</x1>
+            <y1>5</y1>
+            <x2>3</x2>
+            <y2>7</y2>
+            <intersection1>I1</intersection1>
+            <intersection2>I5</intersection2>
+            <direction>down</direction>
+        </road>
+
+        <road name="44">
+            <x1>4</x1>
+            <y1>5</y1>
+            <x2>4</x2>
+            <y2>7</y2>
+            <intersection1>I1</intersection1>
+            <intersection2>I5</intersection2>
+            <direction>up</direction>
+        </road>
+        <road name="45">
+            <x1>17</x1>
+            <y1>5</y1>
+            <x2>17</x2>
+            <y2>11</y2>
+            <intersection1>I3</intersection1>
+            <intersection2>I8</intersection2>
+            <direction>down</direction>
+        </road>
+
+        <road name="46">
+            <x1>18</x1>
+            <y1>5</y1>
+            <x2>18</x2>
+            <y2>11</y2>
+            <intersection1>I3</intersection1>
+            <intersection2>I8</intersection2>
+            <direction>up</direction>
+        </road>
+
+
+
+        <road name="47">
+            <x1>24</x1>
+            <y1>5</y1>
+            <x2>24</x2>
+            <y2>11</y2>
+            <intersection1>I4</intersection1>
+            <intersection2>I9</intersection2>
+            <direction>down</direction>
+        </road>
+
+        <road name="48">
+            <x1>25</x1>
+            <y1>5</y1>
+            <x2>25</x2>
+            <y2>11</y2>
+            <intersection1>I4</intersection1>
+            <intersection2>I9</intersection2>
+            <direction>up</direction>
+        </road>
+
+        <road name="49">
+            <x1>9</x1>
+            <y1>9</y1>
+            <x2>9</x2>
+            <y2>11</y2>
+            <intersection1>I6</intersection1>
+            <intersection2>I7</intersection2>
+            <direction>down</direction>
+        </road>
+
+        <road name="50">
+            <x1>10</x1>
+            <y1>9</y1>
+            <x2>10</x2>
+            <y2>11</y2>
+            <intersection1>I6</intersection1>
+            <intersection2>I7</intersection2>
+            <direction>up</direction>
+        </road>
+        <road name="51">
+            <x1>9</x1>
+            <y1>13</y1>
+            <x2>9</x2>
+            <y2>15</y2>
+            <intersection1>I7</intersection1>
+            <intersection2>I11</intersection2>
+            <direction>down</direction>
+        </road>
+
+        <road name="52">
+            <x1>10</x1>
+            <y1>13</y1>
+            <x2>10</x2>
+            <y2>15</y2>
+            <intersection1>I7</intersection1>
+            <intersection2>I11</intersection2>
+            <direction>up</direction>
+        </road>
+        <road name="53">
+            <x1>17</x1>
+            <y1>13</y1>
+            <x2>17</x2>
+            <y2>15</y2>
+            <intersection1>I8</intersection1>
+            <intersection2>I12</intersection2>
+            <direction>down</direction>
+        </road>
+
+        <road name="54">
+            <x1>18</x1>
+            <y1>13</y1>
+            <x2>18</x2>
+            <y2>15</y2>
+            <intersection1>I8</intersection1>
+            <intersection2>I12</intersection2>
+            <direction>up</direction>
+        </road>
+
+
+
+         <road name="55">
+            <x1>3</x1>
+            <y1>17</y1>
+            <x2>3</x2>
+            <y2>20</y2>
+            <intersection1>I10</intersection1>
+            <intersection2>I13</intersection2>
+            <direction>down</direction>
+        </road>
+
+        <road name="56">
+            <x1>4</x1>
+            <y1>17</y1>
+            <x2>4</x2>
+            <y2>20</y2>
+            <intersection1>I10</intersection1>
+            <intersection2>I13</intersection2>
+            <direction>up</direction>
+        </road>
+
+        <road name="57">
+            <x1>17</x1>
+            <y1>17</y1>
+            <x2>17</x2>
+            <y2>20</y2>
+            <intersection1>I12</intersection1>
+            <intersection2>I15</intersection2>
+            <direction>down</direction>
+        </road>
+
+        <road name="58">
+            <x1>18</x1>
+            <y1>17</y1>
+            <x2>18</x2>
+            <y2>20</y2>
+            <intersection1>I12</intersection1>
+            <intersection2>I15</intersection2>
+            <direction>up</direction>
+        </road>
+        <road name="59">
+            <x1>24</x1>
+            <y1>13</y1>
+            <x2>24</x2>
+            <y2>20</y2>
+            <intersection1>I9</intersection1>
+            <intersection2>I16</intersection2>
+            <direction>down</direction>
+        </road>
+
+        <road name="60">
+            <x1>25</x1>
+            <y1>13</y1>
+            <x2>25</x2>
+            <y2>20</y2>
+            <intersection1>I9</intersection1>
+            <intersection2>I16</intersection2>
+            <direction>up</direction>
+        </road>
+        <road name="61">
+            <x1>3</x1>
+            <y1>22</y1>
+            <x2>3</x2>
+            <y2>25</y2>
+            <intersection1>I13</intersection1>
+            <intersection2>I17</intersection2>
+            <direction>down</direction>
+        </road>
+
+        <road name="62">
+            <x1>4</x1>
+            <y1>22</y1>
+            <x2>4</x2>
+            <y2>25</y2>
+            <intersection1>I13</intersection1>
+            <intersection2>I17</intersection2>
+            <direction>up</direction>
+        </road>
+
+
+
+        <road name="63">
+            <x1>10</x1>
+            <y1>22</y1>
+            <x2>10</x2>
+            <y2>25</y2>
+            <intersection1>I14</intersection1>
+            <intersection2>I18</intersection2>
+            <direction>down</direction>
+        </road>
+
+        <road name="64">
+            <x1>11</x1>
+            <y1>22</y1>
+            <x2>11</x2>
+            <y2>25</y2>
+            <intersection1>I14</intersection1>
+            <intersection2>I18</intersection2>
+            <direction>up</direction>
+        </road>
+
+        <road name="65">
+            <x1>17</x1>
+            <y1>22</y1>
+            <x2>17</x2>
+            <y2>25</y2>
+            <intersection1>I15</intersection1>
+            <intersection2>I19</intersection2>
+            <direction>down</direction>
+        </road>
+
+        <road name="66">
+            <x1>18</x1>
+            <y1>22</y1>
+            <x2>18</x2>
+            <y2>25</y2>
+            <intersection1>I15</intersection1>
+            <intersection2>I19</intersection2>
+            <direction>up</direction>
+        </road>
+        <road name="67">
+            <x1>24</x1>
+            <y1>22</y1>
+            <x2>24</x2>
+            <y2>25</y2>
+            <intersection1>I16</intersection1>
+            <intersection2>I20</intersection2>
+            <direction>down</direction>
+        </road>
+
+        <road name="68">
+            <x1>25</x1>
+            <y1>22</y1>
+            <x2>25</x2>
+            <y2>25</y2>
+            <intersection1>I16</intersection1>
+            <intersection2>I20</intersection2>
+            <direction>up</direction>
+        </road>
+        <road name="69">
+            <x1>3</x1>
+            <y1>27</y1>
+            <x2>3</x2>
+            <y2>30</y2>
+            <intersection1>I17</intersection1>
+            <intersection2>null</intersection2>
+            <direction>down</direction>
+        </road>
+
+        <road name="70">
+            <x1>4</x1>
+            <y1>27</y1>
+            <x2>4</x2>
+            <y2>30</y2>
+            <intersection1>I17</intersection1>
+            <intersection2>null</intersection2>
+            <direction>up</direction>
+        </road>
+
+
+
+         <road name="71">
+            <x1>10</x1>
+            <y1>27</y1>
+            <x2>10</x2>
+            <y2>30</y2>
+            <intersection1>I18</intersection1>
+            <intersection2>null</intersection2>
+            <direction>down</direction>
+        </road>
+
+        <road name="72">
+            <x1>11</x1>
+            <y1>27</y1>
+            <x2>11</x2>
+            <y2>30</y2>
+            <intersection1>I18</intersection1>
+            <intersection2>null</intersection2>
+            <direction>up</direction>
+        </road>
+
+        <road name="73">
+            <x1>24</x1>
+            <y1>27</y1>
+            <x2>24</x2>
+            <y2>30</y2>
+            <intersection1>I20</intersection1>
+            <intersection2>null</intersection2>
+            <direction>down</direction>
+        </road>
+        <road name="74">
+            <x1>25</x1>
+            <y1>27</y1>
+            <x2>25</x2>
+            <y2>30</y2>
+            <intersection1>I20</intersection1>
+            <intersection2>null</intersection2>
+            <direction>up</direction>
+        </road>
+
+        <road name="75">
+            <x1>3</x1>
+            <y1>9</y1>
+            <x2>3</x2>
+            <y2>15</y2>
+            <intersection1>I5</intersection1>
+            <intersection2>I10</intersection2>
+            <direction>down</direction>
+        </road>
+        <road name="76">
+            <x1>4</x1>
+            <y1>9</y1>
+            <x2>4</x2>
+            <y2>15</y2>
+            <intersection1>I5</intersection1>
+            <intersection2>I10</intersection2>
+            <direction>up</direction>
+        </road>
+
+        <road name="77">
+            <x1>9</x1>
+            <y1>5</y1>
+            <x2>9</x2>
+            <y2>7</y2>
+            <intersection1>I2</intersection1>
+            <intersection2>I6</intersection2>
+            <direction>down</direction>
+        </road>
+
+         <road name="78">
+            <x1>10</x1>
+            <y1>5</y1>
+            <x2>10</x2>
+            <y2>7</y2>
+            <intersection1>I2</intersection1>
+            <intersection2>I6</intersection2>
+            <direction>up</direction>
+        </road>
+
+    </roads>
+ 
+
+
+</file>

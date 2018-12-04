@@ -109,7 +109,7 @@ public class Map extends JPanel {
 			Rectangle2D rect = new Rectangle2D.Double(c.location.x * unit, c.location.y * unit, c.size.x * unit * 0.8,
 					c.size.y * unit * 0.8);
 	 
-			g2.setPaint(Color.PINK);
+			g2.setPaint(Color.GRAY);
 			g2.fill(rect);
 			
 			g2.setPaint(Color.BLACK);

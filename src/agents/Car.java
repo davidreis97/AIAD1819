@@ -6,6 +6,8 @@ import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import src.behaviours.*;
 import src.graph.*;
+import src.graph.Road.Direction;
+import src.main.JADELauncher;
 import src.resources.Rectangle;
 import src.resources.Path;
 import src.resources.Messages.MessageType;
@@ -22,12 +24,16 @@ public class Car extends Agent {
 	public Point location;  // location
 	public Point velocity;  // velocity
 	
+	public double carVelocity;
+	
 	private Path path;
+	
+	public long initialTime;
 	
 	/*
 	 * Constructor
 	 */
-	public Car(ArrayList<String> p) {
+	public Car(ArrayList<String> p, double randomValue) {
 
 		this.backCar = null;
 		this.frontCar_position = null;
@@ -37,9 +43,14 @@ public class Car extends Agent {
 		
 		Road r = this.path.getCurrentRoad();
 		
+		this.carVelocity = randomValue;
 		this.velocity = new Point(r.getVelocity()); 	 // velocity
+		this.velocity.mul(carVelocity);
+		
 		this.location = new Point(r.getInitialPoint());  // location
 
+		this.initialTime = System.currentTimeMillis() - JADELauncher.startTime;
+		
 		System.out.print("Hello this is mr car;  path: " + path.toString());
 	}
 
@@ -73,7 +84,8 @@ public class Car extends Agent {
 	 * Checks if the car is out of bounds
 	 */
 	public boolean isOutOfBounds() {
-		if (location.x > Map.width || location.x < 0 || location.y > Map.width || location.y < 0) {
+ 
+		if (location.x > Map.width || location.x < -1 || location.y > Map.width || location.y < -1) {
 			return true;
 		} else {
 			return false;

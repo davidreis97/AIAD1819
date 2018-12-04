@@ -10,13 +10,13 @@ import java.util.ArrayList;
  */
 public class Intersection {
 
-	public String name;						//Intersection name
+	public String name; // Intersection name
 
-	private ArrayList<Road> inRoads;	 	//In roads
-	private ArrayList<Road> outRoads;	 	//Out roads
+	private ArrayList<Road> inRoads; // In roads
+	private ArrayList<Road> outRoads; // Out roads
 
-	private Rectangle area;					//Area of the intersection
-	private Point location;					//Intersection location
+	private Rectangle area; // Area of the intersection
+	private Point location; // Intersection location
 
 	/*
 	 * Constructor
@@ -106,7 +106,7 @@ public class Intersection {
 				exitPoint = new Point(this.location.x + 1 + .2, this.location.y + 0.5);
 
 			} else if (nextRoad.direction == Direction.DOWN) {
-				exitPoint = new Point(this.location.x + .2, this.location.y + 0.5);  
+				exitPoint = new Point(this.location.x + .2, this.location.y + 0.5);
 			}
 
 			break;
@@ -153,7 +153,7 @@ public class Intersection {
 
 		return exitPoint;
 	}
-	
+
 	/*
 	 * Get the exit point, given the in road, and out road name
 	 */
@@ -161,14 +161,15 @@ public class Intersection {
 		Road nextR = getOutRoad(nextRoad);
 		return getExitPoint(currentRoad, nextR);
 	}
-	
+
 	/*
-	 * Returns the area that a car will occupy in the intersection, given the in and out roads
+	 * Returns the area that a car will occupy in the intersection, given the in and
+	 * out roads
 	 */
 	public Rectangle getAreaOccupied(String inRoad, String outRoad) {
 
-		Road in=null;
-		Road out=null;
+		Road in = null;
+		Road out = null;
 
 		for (Road r : outRoads) {
 			if (r.name.equals(outRoad)) {
@@ -187,70 +188,70 @@ public class Intersection {
 		Rectangle res = null;
 
 		switch (in.direction) {
-			case RIGHT: {
-	
-				if (out.direction == Direction.RIGHT) {	//half
-					 
-					res = new Rectangle(this.location.x-1, this.location.y, 2, 1);
-	
-				} else if (out.direction == Direction.UP) {	//all
-					res = new Rectangle(this.location.x-1, this.location.y-1, 2, 2);
-	
-				} else if (out.direction == Direction.DOWN) {	//1
-					res = new Rectangle(this.location.x-1, this.location.y, 1, 1);
-				}
-	
-				break;
+		case RIGHT: {
+
+			if (out.direction == Direction.RIGHT) { // half
+
+				res = new Rectangle(this.location.x - 1, this.location.y, 2, 1);
+
+			} else if (out.direction == Direction.UP) { // all
+				res = new Rectangle(this.location.x - 1, this.location.y - 1, 2, 2);
+
+			} else if (out.direction == Direction.DOWN) { // 1
+				res = new Rectangle(this.location.x - 1, this.location.y, 1, 1);
 			}
-			case LEFT: {
-	
-				if (out.direction == Direction.LEFT) {	// half
-					
-					res = new Rectangle(this.location.x-1, this.location.y-1, 2, 1);
-					 
-				} else if (out.direction == Direction.UP) {	//1
-					res = new Rectangle(this.location.x, this.location.y-1, 1, 1);
-					 
-				} else if (out.direction == Direction.DOWN) {	//all
-					res = new Rectangle(this.location.x-1, this.location.y-1, 2, 2);
-				 
-				}
-	
-				break;
+
+			break;
+		}
+		case LEFT: {
+
+			if (out.direction == Direction.LEFT) { // half
+
+				res = new Rectangle(this.location.x - 1, this.location.y - 1, 2, 1);
+
+			} else if (out.direction == Direction.UP) { // 1
+				res = new Rectangle(this.location.x, this.location.y - 1, 1, 1);
+
+			} else if (out.direction == Direction.DOWN) { // all
+				res = new Rectangle(this.location.x - 1, this.location.y - 1, 2, 2);
+
 			}
-			case UP: {
-				
-				if (out.direction == Direction.UP) {	//half
-					
-					res = new Rectangle(this.location.x, this.location.y-1, 1, 2);
-	
-				} else if (out.direction == Direction.RIGHT) {	//1
-					
-					res = new Rectangle(this.location.x, this.location.y, 1, 1);
-	
-				} else if (out.direction == Direction.LEFT) {	//all
-					res = new Rectangle(this.location.x-1, this.location.y-1, 2, 2);
-				}
-	
-				break;
+
+			break;
+		}
+		case UP: {
+
+			if (out.direction == Direction.UP) { // half
+
+				res = new Rectangle(this.location.x, this.location.y - 1, 1, 2);
+
+			} else if (out.direction == Direction.RIGHT) { // 1
+
+				res = new Rectangle(this.location.x, this.location.y, 1, 1);
+
+			} else if (out.direction == Direction.LEFT) { // all
+				res = new Rectangle(this.location.x - 1, this.location.y - 1, 2, 2);
 			}
-			case DOWN: {
-	
-				if (out.direction == Direction.DOWN) {	//half
-				 
-					res = new Rectangle(this.location.x-1, this.location.y-1, 1, 2);
-	
-				} else if (out.direction == Direction.LEFT) {	//1
-						
-					res = new Rectangle(this.location.x-1, this.location.y-1, 1, 1);
-					
-				} else if (out.direction == Direction.RIGHT) {	//all 
-					 
-					res = new Rectangle(this.location.x-1, this.location.y-1, 2, 2);
-					
-				}
-				break;
+
+			break;
+		}
+		case DOWN: {
+
+			if (out.direction == Direction.DOWN) { // half
+
+				res = new Rectangle(this.location.x - 1, this.location.y - 1, 1, 2);
+
+			} else if (out.direction == Direction.LEFT) { // 1
+
+				res = new Rectangle(this.location.x - 1, this.location.y - 1, 1, 1);
+
+			} else if (out.direction == Direction.RIGHT) { // all
+
+				res = new Rectangle(this.location.x - 1, this.location.y - 1, 2, 2);
+
 			}
+			break;
+		}
 		}
 		return res;
 

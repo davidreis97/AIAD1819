@@ -458,6 +458,7 @@ public class IntersectionAgent extends Agent {
 			System.out.println("Car " + msg.getSender().getName().split("@")[0] + " left intersection");
 
 			intersectionOccupied = false;
+			intersectionCar=null;
 
 			if (ALGORITHM == SelectionAlgorithm.FIRST_COME_FIRST_SERVED) {
 
