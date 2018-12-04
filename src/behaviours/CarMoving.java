@@ -70,7 +70,7 @@ public class CarMoving extends TickerBehaviour {
 		
 		if (p.inIntersection && p.nextSwitchPoint!=null && car.getRectangle().contains(p.nextSwitchPoint)) {
 
-			//System.out.println("switching road");
+			System.out.println("switching road");
 
 			p.switchRoad(car);
 

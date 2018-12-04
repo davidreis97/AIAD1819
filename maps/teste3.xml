@@ -124,7 +124,7 @@
             <y2>10</y2>
             <intersection1>I2</intersection1>
             <intersection2>null</intersection2>
-            <direction>up</direction>
+            <direction>down</direction>
         </road>
 
         <road name="12">
@@ -134,7 +134,7 @@
             <y2>10</y2>
             <intersection1>I2</intersection1>
             <intersection2>null</intersection2>
-            <direction>down</direction>
+            <direction>up</direction>
         </road>
 
     </roads>
@@ -150,7 +150,7 @@
         <path name="2">
             <name>2</name>
             <name>4</name>
-            <name>12</name>
+            <name>11</name>
         </path>
 
         <path name="3">
@@ -164,10 +164,17 @@
             <name>4</name>
             <name>6</name>
         </path>
+
         <path name="5">
             <name>12</name>
             <name>3</name>
             <name>9</name>
+        </path>  
+
+        <path name="6">
+            <name>12</name>
+            <name>3</name>
+            <name>8</name>
         </path>  
 
 

@@ -25,7 +25,7 @@ import src.graph.Road;
 
 public class JADELauncher {
 
-	private static String filename = "maps/teste3.xml";
+	private static String filename = "maps/teste.xml";
 	
 	public static void main(String[] args) {
 

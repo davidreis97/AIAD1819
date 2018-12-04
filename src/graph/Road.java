@@ -55,7 +55,10 @@ public class Road {
 	}
 
 	public Point getInitialPoint() {
-		return startPoint;
+		if(direction != Direction.UP) {
+			return startPoint;
+		}
+		return endPoint;
 	}
 
 	public Direction getDirection() {
