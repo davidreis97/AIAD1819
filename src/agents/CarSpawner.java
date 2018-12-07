@@ -35,7 +35,7 @@ import src.resources.Messages.MessageType;
  */
 public class CarSpawner extends Agent {
 	
-	public static final int SPAWN_INTERVAL = CMDArgs.SPAWN_RATE;	//s
+	public static final int SPAWN_INTERVAL = CMDArgs.SPAWN_RATE;	//s 
 	
 	private ContainerController container;
 	private Map mapa;

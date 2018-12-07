@@ -60,7 +60,8 @@ public class Map extends JPanel {
 	 * Draw the map, with the cars
 	 */
 	public void paintComponent(Graphics g) {
-
+		
+		super.paintComponent(g);
 		// super.paint(g);
 		Graphics2D g2 = (Graphics2D) g;
 
@@ -75,6 +76,7 @@ public class Map extends JPanel {
 			Intersection inter = entry.getValue();
 			g2.fillRect((int)((inter.getLocation().x-1) * unit), (int)( (inter.getLocation().y-1) * unit), 2* unit, 2* unit);
 		}
+		
 		
 		g2.setColor(Color.GRAY);
 		

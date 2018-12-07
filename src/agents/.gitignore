@@ -1,0 +1,11 @@
+/Car.class
+/CarSpawner$ReceiveMessageBehaviour.class
+/CarSpawner.class
+/IntersectionAgent$CollisionDetectionBehaviour.class
+/IntersectionAgent$FirstComeFirstServedBehaviour.class
+/IntersectionAgent$RandomNextBehaviour.class
+/IntersectionAgent$SelectionAlgorithm.class
+/IntersectionAgent.class
+/RoadAgent$ListeningBehaviour.class
+/RoadAgent.class
+/CarSpawner$1.class

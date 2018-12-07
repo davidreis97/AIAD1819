@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 import jade.core.AID;
 
-public class WriteExcel {
+public class WriteExcel { 
 
 	private static final String EXCEL_FILE_LOCATION = "teste.xls";
 
